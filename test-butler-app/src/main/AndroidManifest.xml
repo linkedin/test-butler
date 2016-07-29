@@ -1,0 +1,36 @@
+<!-- Note: sharedUserId is required to make this app run as the same Linux user as system apps -->
+<manifest
+    package="com.linkedin.android.testbutler"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:sharedUserId="android.uid.system"
+    tools:ignore="ProtectedPermissions">
+
+    <!-- Required for adding a custom IActivityController class -->
+    <uses-permission android:name="android.permission.SET_ACTIVITY_WATCHER"/>
+
+    <!-- Restricted permissions -->
+    <uses-permission android:name="android.permission.SET_ANIMATION_SCALE"/>
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"/>
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS"/>
+
+    <!-- Normal permissions -->
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+
+    <application
+        android:allowBackup="true"
+        android:label="@string/app_name"
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning,MissingApplicationIcon">
+
+        <service
+            android:name=".ButlerService"
+            android:exported="true"
+            tools:ignore="ExportedService"/>
+
+    </application>
+
+</manifest>

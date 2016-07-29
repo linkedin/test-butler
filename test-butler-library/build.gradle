@@ -1,0 +1,64 @@
+apply plugin: 'com.android.library'
+
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'test-butler-library'
+
+    publishedGroupId = GROUP_ID
+    libraryName = 'TestButlerLibrary'
+    artifact = 'test-butler-library'
+
+    libraryDescription = 'A companion library for stabilizing Android emulators during testing'
+
+    siteUrl = 'https://github.com/linkedin/test-butler'
+    gitUrl = 'https://github.com/linkedin/test-butler.git'
+
+    libraryVersion = VERSION_NAME
+
+    developerId = ''
+    developerName = ''
+    developerEmail = ''
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 1
+        versionName VERSION_NAME
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+    lintOptions {
+        textReport true
+        textOutput 'stdout'
+        abortOnError true
+        warningsAsErrors true
+        disable 'OldTargetApi','GradleDependency'
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    provided 'com.android.support:support-annotations:23.4.0'
+}
+
+if (!rootProject.ext.isCi) {
+    apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+    apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
+}
