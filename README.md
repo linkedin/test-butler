@@ -3,6 +3,11 @@
 
 Reliable Android testing, at your service.
 
+## Motivation
+
+Test Butler was inspired by the Google presentation "[Going Green: Cleaning up the Toxic Mobile Environment](https://www.youtube.com/watch?v=aHcmsK9jfGU)".
+For more background, read the Test Butler announcement [blog post](https://engineering.linkedin.com/blog/2016/08/introducing-and-open-sourcing-test-butler--reliable-android-test).
+
 ## What does it do?
 
 * Stabilizes the Android emulator, to help prevent test failures caused by emulator issues.
