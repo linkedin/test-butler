@@ -44,13 +44,13 @@ This means that `isUserAMonkey()` **will return true** while Test Butler is runn
 Download the latest .apk and .aar via Maven:
 ```xml
     <dependency>
-      <groupId>com.linkedin.android.testbutler</groupId>
+      <groupId>com.linkedin.testbutler</groupId>
       <artifactId>test-butler-library</artifactId>
       <version>1.0.0</version>
       <type>pom</type>
     </dependency>
     <dependency>
-      <groupId>com.linkedin.android.testbutler</groupId>
+      <groupId>com.linkedin.testbutler</groupId>
       <artifactId>test-butler-app</artifactId>
       <version>1.0.0</version>
       <type>pom</type>
@@ -59,7 +59,7 @@ Download the latest .apk and .aar via Maven:
 
 or Gradle:
 ```
-    androidTestCompile 'com.linkedin.android.testbutler:test-butler-library:1.0.0'
+    androidTestCompile 'com.linkedin.testbutler:test-butler-library:1.0.0'
 ```
 
 ## Getting Started
