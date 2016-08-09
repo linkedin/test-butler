@@ -30,7 +30,7 @@ android {
 
     defaultConfig {
         applicationId "com.linkedin.android.testbutler"
-        minSdkVersion 15
+        minSdkVersion 14
         targetSdkVersion 23
         versionCode 1
         versionName VERSION_NAME
