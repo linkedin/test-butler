@@ -15,15 +15,19 @@
  */
 package com.linkedin.android.testbutler;
 
+import android.app.IntentService;
 import android.app.KeyguardManager;
-import android.app.Service;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.RemoteException;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
+import static android.provider.Settings.Secure.LOCATION_MODE;
 
 /**
  * Main entry point into the Test Butler application.
@@ -33,9 +37,14 @@ import android.util.Log;
  * to test application behavior under a given configuration.
  */
 @SuppressWarnings("deprecation")
-public class ButlerService extends Service {
+public class ButlerService extends IntentService {
 
     private static final String TAG = ButlerService.class.getSimpleName();
+
+	/**
+     * A boolean extra indicating
+     */
+    public static final String DISABLE_ANIMATIONS = "disable_animations";
 
     private AnimationDisabler animationDisabler;
     private RotationChanger rotationChanger;
@@ -44,6 +53,9 @@ public class ButlerService extends Service {
     private WifiManager.WifiLock wifiLock;
     private PowerManager.WakeLock wakeLock;
     private KeyguardManager.KeyguardLock keyguardLock;
+
+    private boolean restoreLocationMode = true;
+    private boolean restoreAnimations = true;
 
     private final ButlerApi.Stub butlerApi = new ButlerApi.Stub() {
         @Override
@@ -62,6 +74,10 @@ public class ButlerService extends Service {
             return rotationChanger.setRotation(getContentResolver(), rotation);
         }
     };
+
+    public ButlerService() {
+        super(TAG);
+    }
 
     @Override
     public void onCreate() {
@@ -115,10 +131,12 @@ public class ButlerService extends Service {
         wifiLock.release();
 
         // Re-enable animations on the emulator
-        animationDisabler.enableAnimations();
+        if (restoreAnimations)
+            animationDisabler.enableAnimations();
 
         // Reset location services state to whatever it originally was
-        locationServicesChanger.restoreLocationServicesState(getContentResolver());
+        if (restoreLocationMode)
+            locationServicesChanger.restoreLocationServicesState(getContentResolver());
 
         // Reset rotation from the accelerometer to whatever it originally was
         rotationChanger.restoreRotationState(getContentResolver());
@@ -131,5 +149,32 @@ public class ButlerService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return butlerApi;
+    }
+
+    @Override
+    protected void onHandleIntent(@NonNull Intent intent) {
+        final Bundle extras = intent.getExtras();
+        if (extras != null) {
+            for (String key : extras.keySet()) {
+                switch (key) {
+                    case LOCATION_MODE:
+                        try {
+                            butlerApi.setLocationMode(extras.getInt(key, -1));
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                        restoreLocationMode = false;
+                        break;
+                    case DISABLE_ANIMATIONS:
+                        if (extras.getBoolean(key, false))
+                            animationDisabler.disableAnimations();
+                        else
+                            animationDisabler.enableAnimations();
+                        restoreAnimations = false;
+                        break;
+                    default:
+                }
+            }
+        }
     }
 }
