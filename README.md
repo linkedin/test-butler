@@ -62,6 +62,8 @@ or Gradle:
     androidTestCompile 'com.linkedin.testbutler:test-butler-library:1.0.0'
 ```
 
+You can also download the apk file manually from [Bintray](https://bintray.com/drewhannay/maven/test-butler-app/) if you prefer.
+
 ## Getting Started
 
 Install the Test Butler apk on your emulator prior to running tests, then add the following to your test runner class:
