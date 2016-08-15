@@ -19,11 +19,17 @@ import android.app.KeyguardManager;
 import android.app.Service;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.RemoteException;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.telephony.TelephonyManager;
 import android.util.Log;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * Main entry point into the Test Butler application.
@@ -50,6 +56,56 @@ public class ButlerService extends Service {
         public boolean setWifiState(boolean enabled) throws RemoteException {
             WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
             return wifiManager.setWifiEnabled(enabled);
+        }
+
+        @Override
+        public boolean setGsmState(boolean enabled) throws RemoteException {
+            TelephonyManager telephonyManager;
+            Method setMobileDataEnabledMethod;
+
+            telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+
+            if (telephonyManager != null) {
+                Log.v(TAG, "TelephonyManager successfully received");
+                try {
+                    setMobileDataEnabledMethod = telephonyManager.getClass().getDeclaredMethod("setDataEnabled", boolean.class);
+
+                    if (setMobileDataEnabledMethod != null) {
+                        setMobileDataEnabledMethod.invoke(telephonyManager, enabled);
+                    } else {
+                        throw createException("No setDataEnabled(boolean) method inside TelephonyManager", null);
+                    }
+                } catch (NoSuchMethodException e) {
+                    throw createException("No setDataEnabled(boolean) method inside TelephonyManager", e);
+                } catch (InvocationTargetException e) {
+                    throw createException("Invocation exception in setDataEnabled(boolean) method inside TelephonyManager", e);
+                } catch (IllegalAccessException e) {
+                    throw createException("IllegalAccessException exception in setDataEnabled(boolean) method inside TelephonyManager", e);
+                }
+            } else {
+                throw createException("No service " + TELEPHONY_SERVICE + " found on device (TelephonyManager)", null);
+            }
+
+            return true;
+        }
+
+        private RemoteException createException(@NonNull String message, @Nullable Exception exception) {
+            RemoteException remoteException;
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                remoteException = new RemoteException(message);
+            } else {
+                Log.e(TAG, message, exception);
+                remoteException = new RemoteException();
+            }
+
+            if(exception != null) {
+                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+                    remoteException.addSuppressed(exception);
+                } else {
+                    Log.e(TAG, message, exception);
+                }
+            }
+            return remoteException;
         }
 
         @Override

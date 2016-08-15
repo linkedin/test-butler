@@ -17,6 +17,7 @@ package com.linkedin.android.testbutler;
 
 interface ButlerApi {
     boolean setWifiState(boolean enabled);
+    boolean setGsmState(boolean enabled);
 
     /**
      * Param should be one of Settings.Secure.LOCATION_MODE_X
