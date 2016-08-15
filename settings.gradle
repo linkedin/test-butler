@@ -1,1 +1,1 @@
-include ':test-butler-app', ':test-butler-library'
+include ':test-butler-app', ':test-butler-library', ':test-butler-demo'
