@@ -17,7 +17,6 @@ package com.linkedin.android.testbutler;
 
 interface ButlerApi {
     boolean setWifiState(boolean enabled);
-    boolean setGsmState(boolean enabled);
 
     /**
      * Param should be one of Settings.Secure.LOCATION_MODE_X
@@ -28,4 +27,6 @@ interface ButlerApi {
      * Param should be one of Surface.ROTATION_X
      */
     boolean setRotation(int rotation);
+
+    boolean setGsmState(boolean enabled);
 }
