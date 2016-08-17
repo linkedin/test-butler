@@ -40,12 +40,11 @@ public class ButlerService extends Service {
     private AnimationDisabler animationDisabler;
     private RotationChanger rotationChanger;
     private LocationServicesChanger locationServicesChanger;
+    private GsmDataDisabler gsmDataDisabler;
 
     private WifiManager.WifiLock wifiLock;
     private PowerManager.WakeLock wakeLock;
     private KeyguardManager.KeyguardLock keyguardLock;
-
-    private GsmDataDisabler gsmDataDisabler;
 
     private final ButlerApi.Stub butlerApi = new ButlerApi.Stub() {
         @Override
