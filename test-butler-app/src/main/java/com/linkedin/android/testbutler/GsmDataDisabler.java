@@ -43,7 +43,7 @@ final class GsmDataDisabler {
                    if (manager != null) {
                        method = ConnectivityManager.class.getDeclaredMethod("setMobileDataEnabled", boolean.class);
                    } else {
-                       throw ExceptionCreator.createRemoteException(TAG, "No service " + ContextWrapper.TELEPHONY_SERVICE + " (TelephonyManager) found on device", null);
+                       throw ExceptionCreator.createRemoteException(TAG, "No service " + ContextWrapper.CONNECTIVITY_SERVICE + " (ConnectivityManager) found on device", null);
                    }
 
                    if (method != null) {
@@ -51,14 +51,14 @@ final class GsmDataDisabler {
                        method.invoke(manager, enabled);
                        method.setAccessible(false);
                    } else {
-                       throw ExceptionCreator.createRemoteException(TAG, "No setDataEnabled(boolean) method inside TelephonyManager", null);
+                       throw ExceptionCreator.createRemoteException(TAG, "No setMobileDataEnabled(boolean) method inside ConnectivityManager", null);
                    }
                } catch (NoSuchMethodException e) {
-                   throw ExceptionCreator.createRemoteException(TAG, "No setDataEnabled(boolean) method inside TelephonyManager", e);
+                   throw ExceptionCreator.createRemoteException(TAG, "NoSuchMethodException exception in setMobileDataEnabled(boolean) method inside ConnectivityManager", e);
                } catch (InvocationTargetException e) {
-                   throw ExceptionCreator.createRemoteException(TAG, "Invocation exception in setDataEnabled(boolean) method inside TelephonyManager", e);
+                   throw ExceptionCreator.createRemoteException(TAG, "InvocationTargetException exception in setMobileDataEnabled(boolean) method inside ConnectivityManager", e);
                } catch (IllegalAccessException e) {
-                   throw ExceptionCreator.createRemoteException(TAG, "IllegalAccessException exception in setDataEnabled(boolean) method inside TelephonyManager", e);
+                   throw ExceptionCreator.createRemoteException(TAG, "IllegalAccessException exception in setMobileDataEnabled(boolean) method inside ConnectivityManager", e);
                }
            } else {
                throw ExceptionCreator.createRemoteException(TAG, "Api before " + Build.VERSION_CODES.KITKAT + " not supported because of WTF", null);
@@ -78,11 +78,11 @@ final class GsmDataDisabler {
                     throw ExceptionCreator.createRemoteException(TAG, "No setDataEnabled(boolean) method inside TelephonyManager", null);
                 }
             } catch (NoSuchMethodException e) {
-                throw ExceptionCreator.createRemoteException(TAG, "No setDataEnabled(boolean) method inside TelephonyManager", e);
+                throw ExceptionCreator.createRemoteException(TAG, "NoSuchMethodException exception in setDataEnabled(boolean) method inside TelephonyManager", e);
             } catch (InvocationTargetException e) {
-                throw ExceptionCreator.createRemoteException(TAG, "Invocation exception in setDataEnabled(boolean) method inside TelephonyManager", e);
+                throw ExceptionCreator.createRemoteException(TAG, "InvocationTargetException exception in exception in setDataEnabled(boolean) method inside TelephonyManager", e);
             } catch (IllegalAccessException e) {
-                throw ExceptionCreator.createRemoteException(TAG, "IllegalAccessException exception in setDataEnabled(boolean) method inside TelephonyManager", e);
+                throw ExceptionCreator.createRemoteException(TAG, "IllegalAccessException exception in exception in setDataEnabled(boolean) method inside TelephonyManager", e);
             }
         }
         return true;
