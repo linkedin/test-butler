@@ -28,6 +28,8 @@ interface ButlerApi {
      */
     boolean setRotation(int rotation);
 
+    boolean setGsmState(boolean enabled);
+
     String grantPermission(String packageName, String permission);
     String revokePermission(String packageName, String permission);
 }

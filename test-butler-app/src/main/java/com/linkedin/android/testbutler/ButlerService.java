@@ -41,6 +41,7 @@ public class ButlerService extends Service {
     private AnimationDisabler animationDisabler;
     private RotationChanger rotationChanger;
     private LocationServicesChanger locationServicesChanger;
+    private GsmDataDisabler gsmDataDisabler;
     private PermissionChanger permissionChanger;
 
     private WifiManager.WifiLock wifiLock;
@@ -52,6 +53,11 @@ public class ButlerService extends Service {
         public boolean setWifiState(boolean enabled) throws RemoteException {
             WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
             return wifiManager.setWifiEnabled(enabled);
+        }
+
+        @Override
+        public boolean setGsmState(boolean enabled) throws RemoteException {
+            return gsmDataDisabler.setGsmState(ButlerService.this, enabled);
         }
 
         @Override
@@ -91,9 +97,6 @@ public class ButlerService extends Service {
         locationServicesChanger = new LocationServicesChanger();
         locationServicesChanger.saveLocationServicesState(getContentResolver());
 
-        //Grant and revokes permissions
-        permissionChanger = new PermissionChanger();
-
         // Disable animations on the device so tests can run reliably
         animationDisabler = new AnimationDisabler();
         animationDisabler.disableAnimations();
@@ -115,6 +118,12 @@ public class ButlerService extends Service {
                 | PowerManager.ACQUIRE_CAUSES_WAKEUP
                 | PowerManager.ON_AFTER_RELEASE, "ButlerWakeLock");
         wakeLock.acquire();
+
+        // Instantiate gsm data disabler
+        gsmDataDisabler = new GsmDataDisabler();
+
+        //Grant and revokes permissions
+        permissionChanger = new PermissionChanger();
 
         // Install custom IActivityController to prevent system dialogs from appearing if apps crash or ANR
         NoDialogActivityController.install();
