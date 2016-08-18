@@ -27,4 +27,7 @@ interface ButlerApi {
      * Param should be one of Surface.ROTATION_X
      */
     boolean setRotation(int rotation);
+
+    String grantPermission(String packageName, String permission);
+    String revokePermission(String packageName, String permission);
 }
