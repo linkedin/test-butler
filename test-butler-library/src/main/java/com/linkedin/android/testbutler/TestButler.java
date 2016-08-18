@@ -232,6 +232,36 @@ public class TestButler {
         }
     }
 
+    /**
+     * Grant permission to package
+     * @param packageName
+     * @param permission
+     * @return
+     */
+    public static String grantPermission(String packageName, String permission) {
+        verifyApiReady();
+        try {
+            return butlerApi.grantPermission(packageName, permission);
+        } catch (RemoteException e) {
+            throw new IllegalStateException("Failed to communicate with ButlerService", e);
+        }
+    }
+
+    /**
+     * Revoke permission to package
+     * @param packageName
+     * @param permission
+     * @return
+     */
+    public static String revokePermission(String packageName, String permission) {
+        verifyApiReady();
+        try {
+            return butlerApi.revokePermission(packageName, permission);
+        } catch (RemoteException e) {
+            throw new IllegalStateException("Failed to communicate with ButlerService", e);
+        }
+    }
+
     private static void verifyApiReady() {
         if (butlerApi == null) {
             throw new IllegalStateException("ButlerService is not started!");
