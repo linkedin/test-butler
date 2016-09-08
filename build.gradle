@@ -1,3 +1,5 @@
+import com.linkedin.gradle.DistributeTask
+
 buildscript {
     repositories {
         jcenter()
@@ -6,9 +8,34 @@ buildscript {
         classpath 'com.android.tools.build:gradle:2.1.2'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4'
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.0"
     }
 
     ext {
         isCi = "true".equals(System.getenv('CI'))
     }
+}
+
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'maven-publish'
+
+artifactoryPublish.skip = true
+artifactory {
+    contextUrl = 'https://linkedin.jfrog.io/linkedin'
+    publish {
+        repoKey = 'test-butler'
+        username = System.getenv('ARTIFACTORY_USER') ?: ""
+        password = System.getenv('ARTIFACTORY_KEY') ?: ""
+
+        defaults {
+            publications 'apk', 'lib'
+        }
+
+        publishArtifacts = true
+    }
+    clientConfig.setIncludeEnvVars(false)
+}
+
+task distributeBuild(type: DistributeTask) {
+    dependsOn ':artifactoryPublish', 'test-butler-app:artifactoryPublish', 'test-butler-library:artifactoryPublish'
 }
