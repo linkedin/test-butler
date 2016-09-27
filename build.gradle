@@ -19,6 +19,10 @@ buildscript {
 apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 
+allprojects {
+    group = GROUP_ID
+}
+
 artifactoryPublish.skip = true
 artifactory {
     contextUrl = 'https://linkedin.jfrog.io/linkedin'

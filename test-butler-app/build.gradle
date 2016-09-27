@@ -37,24 +37,41 @@ android {
     }
 }
 
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
 publishing {
     publications {
         apk(MavenPublication) {
-            groupId GROUP_ID
 
             artifact("$buildDir/outputs/apk/${project.getName()}-release.apk") {
                 builtBy assembleRelease
             }
 
+            artifact sourcesJar
+            artifact javadocJar
+
             pom.withXml {
                 asNode().children().last() + {
                     resolveStrategy = Closure.DELEGATE_FIRST
                     description = "A companion apk for stabilizing Android emulators during testing"
-                    artifactId = 'test-butler-app'
-                    url 'https://github.com/linkedin/pygradle'
+                    url 'https://github.com/linkedin/test-butler'
                     scm {
                         url 'https://github.com/linkedin/test-butler'
                         connection 'scm:git:git://github.com/linkedin/test-butler.git'
+                        developerConnection 'https://github.com/linkedin/test-butler.git'
                     }
                     licenses {
                         license {
