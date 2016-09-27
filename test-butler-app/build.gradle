@@ -1,28 +1,8 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'maven-publish'
 
-ext {
-    bintrayRepo = 'maven'
-    bintrayName = 'test-butler-app'
-
-    publishedGroupId = GROUP_ID
-    libraryName = 'TestButlerApp'
-    artifact = 'test-butler-app'
-
-    libraryDescription = 'A companion apk for stabilizing Android emulators during testing'
-
-    siteUrl = 'https://github.com/linkedin/test-butler'
-    gitUrl = 'https://github.com/linkedin/test-butler.git'
-
-    libraryVersion = VERSION_NAME
-
-    developerId = ''
-    developerName = ''
-    developerEmail = ''
-
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
-}
+version = VERSION_NAME
 
 android {
     compileSdkVersion 23
@@ -57,15 +37,67 @@ android {
     }
 }
 
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+publishing {
+    publications {
+        apk(MavenPublication) {
+
+            artifact("$buildDir/outputs/apk/${project.getName()}-release.apk") {
+                builtBy assembleRelease
+            }
+
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom.withXml {
+                asNode().children().last() + {
+                    resolveStrategy = Closure.DELEGATE_FIRST
+                    description = "A companion apk for stabilizing Android emulators during testing"
+                    url 'https://github.com/linkedin/test-butler'
+                    scm {
+                        url 'https://github.com/linkedin/test-butler'
+                        connection 'scm:git:git://github.com/linkedin/test-butler.git'
+                        developerConnection 'https://github.com/linkedin/test-butler.git'
+                    }
+                    licenses {
+                        license {
+                            name 'The Apache Software License, Version 2.0'
+                            url 'http://www.apache.org/license/LICENSE-2.0.txt'
+                            distribution 'repo'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id 'com.linkedin'
+                            name 'LinkedIn Corp'
+                            email ''
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 repositories {
     jcenter()
 }
 
 dependencies {
     provided 'com.android.support:support-annotations:23.4.0'
-}
-
-if (!rootProject.ext.isCi) {
-    apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
-    apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
 }
