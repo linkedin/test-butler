@@ -10,10 +10,6 @@ buildscript {
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4'
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.0"
     }
-
-    ext {
-        isCi = "true".equals(System.getenv('CI'))
-    }
 }
 
 apply plugin: 'com.jfrog.artifactory'
