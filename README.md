@@ -88,7 +88,7 @@ public class ExampleTestRunner extends AndroidJUnitRunner {
 To change settings on the device from your tests, just use the methods in the `TestButler` class. For example:
 
 ```java
-@BeforeClass
+@Before
 public static void setupClass() {
   TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_OFF);
 }
@@ -98,7 +98,7 @@ public void verifyBehaviorWithNoLocation() {
   // ...
 }
 
-@AfterClass
+@After
 public static void teardownClass() {
   TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_HIGH_ACCURACY);
 }
