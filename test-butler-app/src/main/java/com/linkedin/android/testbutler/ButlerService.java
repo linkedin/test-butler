@@ -41,6 +41,7 @@ public class ButlerService extends Service {
     private RotationChanger rotationChanger;
     private LocationServicesChanger locationServicesChanger;
     private GsmDataDisabler gsmDataDisabler;
+    private PermissionGranter permissionGranter;
 
     private WifiManager.WifiLock wifiLock;
     private PowerManager.WakeLock wakeLock;
@@ -66,6 +67,11 @@ public class ButlerService extends Service {
         @Override
         public boolean setRotation(int rotation) throws RemoteException {
             return rotationChanger.setRotation(getContentResolver(), rotation);
+        }
+
+        @Override
+        public boolean grantPermission(String packageName, String permission) throws RemoteException {
+            return permissionGranter.grantPermission(ButlerService.this, packageName, permission);
         }
     };
 
@@ -105,8 +111,8 @@ public class ButlerService extends Service {
                 | PowerManager.ON_AFTER_RELEASE, "ButlerWakeLock");
         wakeLock.acquire();
 
-        // Instantiate gsm data disabler
         gsmDataDisabler = new GsmDataDisabler();
+        permissionGranter = new PermissionGranter();
 
         // Install custom IActivityController to prevent system dialogs from appearing if apps crash or ANR
         NoDialogActivityController.install();

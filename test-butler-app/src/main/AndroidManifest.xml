@@ -9,6 +9,9 @@
     <!-- Required for adding a custom IActivityController class -->
     <uses-permission android:name="android.permission.SET_ACTIVITY_WATCHER"/>
 
+    <!-- Required for granting permissions to the app under test -->
+    <uses-permission android:name="android.permission.GRANT_REVOKE_PERMISSIONS"/>
+
     <!-- Restricted permissions -->
     <uses-permission android:name="android.permission.SET_ANIMATION_SCALE"/>
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"/>
