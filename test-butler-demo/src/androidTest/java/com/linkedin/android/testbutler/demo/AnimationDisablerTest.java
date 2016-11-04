@@ -4,7 +4,7 @@ import android.support.test.InstrumentationRegistry;
 import com.linkedin.android.testbutler.TestButler;
 import org.junit.Test;
 
-public class AnimationDisablerShould {
+public class AnimationDisablerTest {
 
     @Test
     public void disableAnimations() throws Exception {
