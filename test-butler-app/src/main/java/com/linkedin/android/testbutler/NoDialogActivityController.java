@@ -46,14 +46,14 @@ class NoDialogActivityController extends IActivityController.Stub {
 
     @Override
     public boolean activityStarting(Intent intent, String pkg) throws RemoteException {
-        Log.e(TAG, "activityStarting: " + pkg + " " + intent.toString());
+        Log.v(TAG, "activityStarting: " + pkg + " " + intent.toString());
         // allow all activities to start
         return true;
     }
 
     @Override
     public boolean activityResuming(String pkg) throws RemoteException {
-        Log.e(TAG, "activityResuming: " + pkg);
+        Log.v(TAG, "activityResuming: " + pkg);
         // allow all activities to resume
         return true;
     }
@@ -61,21 +61,21 @@ class NoDialogActivityController extends IActivityController.Stub {
     @Override
     public boolean appCrashed(String processName, int pid, String shortMsg, String longMsg,
                               long timeMillis, String stackTrace) throws RemoteException {
-        Log.e(TAG, "appCrashed: " + processName + ":" + pid + " " + shortMsg + " " + longMsg + " " + stackTrace);
+        Log.v(TAG, "appCrashed: " + processName + ":" + pid + " " + shortMsg + " " + longMsg + " " + stackTrace);
         // return false to prevent the system dialog from appearing
         return false;
     }
 
     @Override
     public int appNotResponding(String processName, int pid, String processStats) throws RemoteException {
-        Log.e(TAG, "appNotResponding: " + processName + ":" + pid + " " + processStats);
+        Log.v(TAG, "appNotResponding: " + processName + ":" + pid + " " + processStats);
         // return -1 to kill the ANR-ing app immediately and prevent the system dialog from appearing
         return -1;
     }
 
     @Override
     public int systemNotResponding(String msg) throws RemoteException {
-        Log.e(TAG, "systemNotResponding: " + msg);
+        Log.v(TAG, "systemNotResponding: " + msg);
         // return -1 to let the system continue with its normal kill
         return -1;
     }
