@@ -29,4 +29,6 @@ interface ButlerApi {
     boolean setRotation(int rotation);
 
     boolean setGsmState(boolean enabled);
+
+    boolean grantPermission(String packageName, String permission);
 }
