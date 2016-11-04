@@ -4,6 +4,7 @@
 
 Add api for granting runtime permissions on API 23+
 Reduce log spam from NoDialogActivityController
+Preserve original values of animation scales after using Test Butler
 
 ## Version 1.0.1
 
