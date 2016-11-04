@@ -19,6 +19,14 @@ allprojects {
     group = GROUP_ID
 }
 
+ext {
+    compileSdkVersion = 24
+    buildToolsVersion = '24.0.2'
+    minSdkVersion = 14
+    targetSdkVersion = 24
+    supportLibrariesVersion = '24.2.1'
+}
+
 artifactoryPublish.skip = true
 artifactory {
     contextUrl = 'https://linkedin.jfrog.io/linkedin'
