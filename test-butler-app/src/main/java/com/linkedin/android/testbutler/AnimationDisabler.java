@@ -34,7 +34,8 @@ final class AnimationDisabler {
     private static String TAG = AnimationDisabler.class.getSimpleName();
 
     private static final float DISABLED = 0.0f;
-    private static final float DEFAULT = 1.0f;
+
+    private float[] originalScaleFactors;
 
     private Method setAnimationScalesMethod;
     private Method getAnimationScalesMethod;
@@ -66,6 +67,7 @@ final class AnimationDisabler {
      */
     void disableAnimations() {
         try {
+            originalScaleFactors = getAnimationScaleFactors();
             setAnimationScaleFactors(DISABLED);
         } catch (Exception e) {
             Log.e(TAG, "Failed to disable animations", e);
@@ -77,15 +79,23 @@ final class AnimationDisabler {
      */
     void enableAnimations() {
         try {
-            setAnimationScaleFactors(DEFAULT);
+            restoreAnimationScaleFactors();
         } catch (Exception e) {
             Log.e(TAG, "Failed to enable animations", e);
         }
     }
 
+    private float[] getAnimationScaleFactors() throws InvocationTargetException, IllegalAccessException {
+        return (float[]) getAnimationScalesMethod.invoke(windowManagerObject);
+    }
+
     private void setAnimationScaleFactors(float scaleFactor) throws InvocationTargetException, IllegalAccessException {
-        float[] scaleFactors = (float[]) getAnimationScalesMethod.invoke(windowManagerObject);
+        float[] scaleFactors = new float[originalScaleFactors.length];
         Arrays.fill(scaleFactors, scaleFactor);
         setAnimationScalesMethod.invoke(windowManagerObject, new Object[]{scaleFactors});
+    }
+
+    private void restoreAnimationScaleFactors() throws InvocationTargetException, IllegalAccessException {
+        setAnimationScalesMethod.invoke(windowManagerObject, new Object[]{originalScaleFactors});
     }
 }
