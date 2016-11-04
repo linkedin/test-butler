@@ -3,6 +3,7 @@
 ## Version 1.1.0
 
 Add api for granting runtime permissions on API 23+
+Reduce log spam from NoDialogActivityController
 
 ## Version 1.0.1
 
