@@ -142,6 +142,20 @@ public class TestButler {
     }
 
     /**
+     * Validate that all animations have been disabled during the {@link #setup(Context)} call.
+     * <p>
+     * This method will fail with an {@link junit.framework.AssertionFailedError} if animations were not disabled
+     * by the {@link #setup(Context)} method. This is useful if you want to immediately halt test execution if
+     * animations could not be disabled by Test Butler, rather than failing gracefully and continuing
+     * to try and run your tests.
+     *
+     * @param context the "target context"; i.e. Context of the app under test (not the test apk context!)
+     */
+    public static void verifyAnimationsDisabled(@NonNull Context context) {
+        AnimationAssertions.verifyAnimationsDisabled(context);
+    }
+
+    /**
      * Enable/disable the Wifi connection on the emulator
      *
      * @param enabled true if wifi should be enabled, false otherwise
