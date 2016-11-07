@@ -19,6 +19,7 @@ For more background, read the Test Butler announcement [blog post](https://engin
   * **Change device orientation:** Tests can manually set the orientation of the device during test execution.
   * **Set location services mode:** Test Butler lets your code simulate different location services modes, like battery saver or high accuracy.
   * **Set application locale:** Tests can set a custom `Locale` object for their application to simulate running the app in another language.
+  * **Grant runtime permissions:** Tests can grant Marshmallow's runtime permissions to their application directly from test code.
 
 ## How does it work?
 
@@ -47,20 +48,20 @@ Download the latest .apk and .aar via Maven:
     <dependency>
       <groupId>com.linkedin.testbutler</groupId>
       <artifactId>test-butler-library</artifactId>
-      <version>1.0.1</version>
+      <version>1.1.0</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>com.linkedin.testbutler</groupId>
       <artifactId>test-butler-app</artifactId>
-      <version>1.0.1</version>
+      <version>1.1.0</version>
       <type>pom</type>
     </dependency>
 ```
 
 or Gradle:
 ```
-    androidTestCompile 'com.linkedin.testbutler:test-butler-library:1.0.1'
+    androidTestCompile 'com.linkedin.testbutler:test-butler-library:1.1.0'
 ```
 
 You can also download the apk file manually from [Bintray](https://bintray.com/linkedin/maven/test-butler-app/) if you prefer.

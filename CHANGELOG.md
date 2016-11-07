@@ -1,6 +1,6 @@
 # Change Log
 
-## Version 1.1.0
+## Version 1.1.0 (2016-11-07)
 
 - Add api for granting runtime permissions on API 23+
 - Reduce log spam from NoDialogActivityController
