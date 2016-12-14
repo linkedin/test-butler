@@ -36,18 +36,18 @@ public class SpellCheckerDisabler {
      * Should be called before starting tests, to save original spell checker state
      */
     @SuppressWarnings("deprecation")
-    void saveLocationServicesState(@NonNull ContentResolver contentResolver) {
+    void saveSpellCheckerState(@NonNull ContentResolver contentResolver) {
         try {
             originalSpellCheckerMode = Settings.Secure.getInt(contentResolver, SPELL_CHECKER_SETTING) == 1;
         } catch (Settings.SettingNotFoundException e) {
-            Log.e(TAG, "Error reading location mode settings!", e);
+            Log.e(TAG, "Error reading spell checker setting!", e);
         }
     }
 
     /**
      * Should be called after testing completes, to restore original spell checker state
      */
-    void restoreLocationServicesState(@NonNull ContentResolver contentResolver) {
+    void restoreSpellCheckerState(@NonNull ContentResolver contentResolver) {
         setSpellChecker(contentResolver, originalSpellCheckerMode);
     }
 

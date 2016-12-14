@@ -121,7 +121,7 @@ public class ButlerService extends Service {
         permissionGranter = new PermissionGranter();
 
         spellCheckerDisabler = new SpellCheckerDisabler();
-        spellCheckerDisabler.saveLocationServicesState(getContentResolver());
+        spellCheckerDisabler.saveSpellCheckerState(getContentResolver());
         // Disable spell checker by default
         spellCheckerDisabler.setSpellChecker(getContentResolver(), false);
 
@@ -153,7 +153,7 @@ public class ButlerService extends Service {
         NoDialogActivityController.uninstall();
 
         // Reset the spell checker to the original state
-        spellCheckerDisabler.restoreLocationServicesState(getContentResolver());
+        spellCheckerDisabler.restoreSpellCheckerState(getContentResolver());
     }
 
     @Nullable
