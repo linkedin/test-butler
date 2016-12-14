@@ -31,4 +31,6 @@ interface ButlerApi {
     boolean setGsmState(boolean enabled);
 
     boolean grantPermission(String packageName, String permission);
+
+    boolean setSpellCheckerState(boolean enabled);
 }

@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 1.2.0-SNAPSHOT
+- Add api for enabling and disabling the spell checker during tests
+- Disable spell checker by default during tests
+
 ## Version 1.1.0 (2016-11-07)
 
 - Add api for granting runtime permissions on API 23+

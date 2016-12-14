@@ -247,6 +247,21 @@ public class TestButler {
     }
 
     /**
+     * Enable or disable the system spell checker
+     *
+     * @param enabled What state the spell checker should be set to
+     */
+    public static void setSpellCheckerEnabled(boolean enabled) {
+        try {
+            if (!butlerApi.setSpellCheckerState(enabled)) {
+                throw new IllegalStateException("Failed to set spell checker!");
+            }
+        } catch (RemoteException e) {
+            throw new IllegalStateException("Failed to communicate with ButlerService", e);
+        }
+    }
+
+    /**
      * A helper method for granting runtime permissions to apps under test on API 23+
      * <p>
      * Note: Before API 23, this method is a no-op

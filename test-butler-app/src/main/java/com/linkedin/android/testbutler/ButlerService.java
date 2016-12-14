@@ -42,6 +42,7 @@ public class ButlerService extends Service {
     private LocationServicesChanger locationServicesChanger;
     private GsmDataDisabler gsmDataDisabler;
     private PermissionGranter permissionGranter;
+    private SpellCheckerDisabler spellCheckerDisabler;
 
     private WifiManager.WifiLock wifiLock;
     private PowerManager.WakeLock wakeLock;
@@ -72,6 +73,11 @@ public class ButlerService extends Service {
         @Override
         public boolean grantPermission(String packageName, String permission) throws RemoteException {
             return permissionGranter.grantPermission(ButlerService.this, packageName, permission);
+        }
+
+        @Override
+        public boolean setSpellCheckerState(boolean enabled) {
+            return spellCheckerDisabler.setSpellChecker(getContentResolver(), enabled);
         }
     };
 
@@ -114,6 +120,11 @@ public class ButlerService extends Service {
         gsmDataDisabler = new GsmDataDisabler();
         permissionGranter = new PermissionGranter();
 
+        spellCheckerDisabler = new SpellCheckerDisabler();
+        spellCheckerDisabler.saveSpellCheckerState(getContentResolver());
+        // Disable spell checker by default
+        spellCheckerDisabler.setSpellChecker(getContentResolver(), false);
+
         // Install custom IActivityController to prevent system dialogs from appearing if apps crash or ANR
         NoDialogActivityController.install();
     }
@@ -140,6 +151,9 @@ public class ButlerService extends Service {
 
         // Uninstall our IActivityController to resume normal Activity behavior
         NoDialogActivityController.uninstall();
+
+        // Reset the spell checker to the original state
+        spellCheckerDisabler.restoreSpellCheckerState(getContentResolver());
     }
 
     @Nullable
