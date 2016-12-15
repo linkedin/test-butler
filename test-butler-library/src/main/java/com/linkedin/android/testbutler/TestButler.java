@@ -251,10 +251,25 @@ public class TestButler {
      *
      * @param enabled What state the spell checker should be set to
      */
-    public static void setSpellCheckerEnabled(boolean enabled) {
+    public static void setSpellCheckerState(boolean enabled) {
         try {
             if (!butlerApi.setSpellCheckerState(enabled)) {
                 throw new IllegalStateException("Failed to set spell checker!");
+            }
+        } catch (RemoteException e) {
+            throw new IllegalStateException("Failed to communicate with ButlerService", e);
+        }
+    }
+
+    /**
+     * Enable or disable the system software keyboard
+     *
+     * @param enabled What state the software keyboard should be set to
+     */
+    public static void setSoftKeyboardState(boolean enabled) {
+        try {
+            if (!butlerApi.setSoftKeyboardState(enabled)) {
+                throw new IllegalStateException("Failed to set software keyboard!");
             }
         } catch (RemoteException e) {
             throw new IllegalStateException("Failed to communicate with ButlerService", e);

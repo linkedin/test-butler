@@ -21,43 +21,43 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 /**
- * A helper class for disabling or enabling the system spell checker
+ * A helper class for disabling or enabling the software keyboard
  */
-public class SpellCheckerDisabler {
+public class SoftKeyboardDisabler {
 
-    private static final String TAG = SpellCheckerDisabler.class.getSimpleName();
+    private static final String TAG = SoftKeyboardDisabler.class.getSimpleName();
 
     // The constant in Settings.Secure is marked with @hide, so we can't use it
-    private static final String SPELL_CHECKER_SETTING = "spell_checker_enabled";
+    private static final String SOFT_KEYBOARD_SETTING = "show_ime_with_hard_keyboard";
 
-    private boolean originalSpellCheckerMode;
+    private boolean originalSoftKeyboardMode;
 
     /**
-     * Should be called before starting tests, to save original spell checker state
+     * Should be called before starting tests, to save original software keyboard state
      */
-    void saveSpellCheckerState(@NonNull ContentResolver contentResolver) {
+    void saveSoftKeyboardState(@NonNull ContentResolver contentResolver) {
         try {
-            originalSpellCheckerMode = Settings.Secure.getInt(contentResolver, SPELL_CHECKER_SETTING) == 1;
+            originalSoftKeyboardMode = Settings.Secure.getInt(contentResolver, SOFT_KEYBOARD_SETTING) == 1;
         } catch (Settings.SettingNotFoundException e) {
-            Log.e(TAG, "Error reading spell checker (" + SPELL_CHECKER_SETTING + ") setting!", e);
+            Log.e(TAG, "Error reading soft keyboard (" + SOFT_KEYBOARD_SETTING + ") setting!", e);
         }
     }
 
     /**
-     * Should be called after testing completes, to restore original spell checker state
+     * Should be called after testing completes, to restore original software keyboard state
      */
-    void restoreSpellCheckerState(@NonNull ContentResolver contentResolver) {
-        setSpellChecker(contentResolver, originalSpellCheckerMode);
+    void restoreSoftKeyboardState(@NonNull ContentResolver contentResolver) {
+        setSoftKeyboard(contentResolver, originalSoftKeyboardMode);
     }
 
     /**
-     * Enable or disable the system spell checker
+     * Enable or disable the system software keyboard
      * @param resolver the {@link ContentResolver} used to modify settings
-     * @param enabled The desired state of the Spell Checker service
+     * @param enabled The desired state of the keyboard
      * @return true if the value was set, false otherwise
      */
-    public boolean setSpellChecker(@NonNull ContentResolver resolver, boolean enabled) {
+    public boolean setSoftKeyboard(@NonNull ContentResolver resolver, boolean enabled) {
         int val = enabled ? 1 : 0;
-        return Settings.Secure.putInt(resolver, SPELL_CHECKER_SETTING, val);
+        return Settings.Secure.putInt(resolver, SOFT_KEYBOARD_SETTING, val);
     }
 }

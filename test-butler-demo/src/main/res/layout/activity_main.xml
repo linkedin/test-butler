@@ -14,12 +14,18 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<LinearLayout
+<RelativeLayout
     android:id="@+id/activity_main"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="com.linkedin.android.testbutler.demo.MainActivity">
-</LinearLayout>
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/editText"/>
+</RelativeLayout>
