@@ -16,6 +16,8 @@
 package com.linkedin.android.testbutler.demo;
 
 
+import android.os.Build;
+import android.support.test.filters.SdkSuppress;
 import android.support.test.rule.ActivityTestRule;
 import android.widget.EditText;
 import com.linkedin.android.testbutler.TestButler;
@@ -30,11 +32,12 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-public class SoftKeyboardDisablerTest {
+public class ShowImeWithHardKeyboardHelperTest {
 
     @Rule
     public ActivityTestRule<MainActivity> testRule = new ActivityTestRule<>(MainActivity.class);
 
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.LOLLIPOP_MR1)
     @Test
     public void keyboardDoesNotShow() {
         TestButler.setSoftKeyboardState(false);
@@ -53,6 +56,7 @@ public class SoftKeyboardDisablerTest {
         assertEquals(before[1], after[1]);
     }
 
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.LOLLIPOP_MR1)
     @Test
     public void keyboardDoesShow() {
         TestButler.setSoftKeyboardState(true);

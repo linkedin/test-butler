@@ -34,5 +34,5 @@ interface ButlerApi {
 
     boolean setSpellCheckerState(boolean enabled);
 
-    boolean setSoftKeyboardState(boolean enabled);
+    boolean setShowImeWithHardKeyboard(boolean enabled);
 }

@@ -268,7 +268,7 @@ public class TestButler {
      */
     public static void setSoftKeyboardState(boolean enabled) {
         try {
-            if (!butlerApi.setSoftKeyboardState(enabled)) {
+            if (!butlerApi.setShowImeWithHardKeyboard(enabled)) {
                 throw new IllegalStateException("Failed to set software keyboard!");
             }
         } catch (RemoteException e) {

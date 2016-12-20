@@ -23,7 +23,7 @@
     tools:context="com.linkedin.android.testbutler.demo.MainActivity">
 
     <EditText
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
         android:layout_alignParentBottom="true"

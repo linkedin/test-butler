@@ -21,11 +21,16 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 /**
- * A helper class for disabling or enabling the software keyboard
+ * A helper class for setting the ime keyboard
+ *
+ * This can be used to force the hardware ime keyboard, preventing most occurences of the software keyboard showing on
+ * the screen in tests
+ *
+ * Requires API 22+
  */
-public class SoftKeyboardDisabler {
+public class ShowImeWithHardKeyboardHelper {
 
-    private static final String TAG = SoftKeyboardDisabler.class.getSimpleName();
+    private static final String TAG = ShowImeWithHardKeyboardHelper.class.getSimpleName();
 
     // The constant in Settings.Secure is marked with @hide, so we can't use it
     private static final String SOFT_KEYBOARD_SETTING = "show_ime_with_hard_keyboard";
@@ -33,9 +38,9 @@ public class SoftKeyboardDisabler {
     private boolean originalSoftKeyboardMode;
 
     /**
-     * Should be called before starting tests, to save original software keyboard state
+     * Should be called before starting tests, to save original ime keyboard state
      */
-    void saveSoftKeyboardState(@NonNull ContentResolver contentResolver) {
+    void saveShowImeState(@NonNull ContentResolver contentResolver) {
         try {
             originalSoftKeyboardMode = Settings.Secure.getInt(contentResolver, SOFT_KEYBOARD_SETTING) == 1;
         } catch (Settings.SettingNotFoundException e) {
@@ -44,19 +49,19 @@ public class SoftKeyboardDisabler {
     }
 
     /**
-     * Should be called after testing completes, to restore original software keyboard state
+     * Should be called after testing completes, to restore original ime keyboard state
      */
-    void restoreSoftKeyboardState(@NonNull ContentResolver contentResolver) {
-        setSoftKeyboard(contentResolver, originalSoftKeyboardMode);
+    void restoreShowImeState(@NonNull ContentResolver contentResolver) {
+        setShowImeWithHardKeyboard(contentResolver, originalSoftKeyboardMode);
     }
 
     /**
-     * Enable or disable the system software keyboard
+     * Force the system to use the hardware keyboard
      * @param resolver the {@link ContentResolver} used to modify settings
-     * @param enabled The desired state of the keyboard
+     * @param enabled Whether to require the hardware keyboard or not
      * @return true if the value was set, false otherwise
      */
-    public boolean setSoftKeyboard(@NonNull ContentResolver resolver, boolean enabled) {
+    public boolean setShowImeWithHardKeyboard(@NonNull ContentResolver resolver, boolean enabled) {
         int val = enabled ? 1 : 0;
         return Settings.Secure.putInt(resolver, SOFT_KEYBOARD_SETTING, val);
     }

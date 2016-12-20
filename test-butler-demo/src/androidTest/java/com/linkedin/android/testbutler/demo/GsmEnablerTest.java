@@ -59,7 +59,6 @@ public class GsmEnablerTest {
         disableDataTransferAndCheck();
     }
 
-
     @Test
     public void disableAndEnableGsmDataTransmission() {
         //Precondition
