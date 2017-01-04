@@ -82,8 +82,8 @@ public class ButlerService extends Service {
         }
 
         @Override
-        public boolean setShowImeWithHardKeyboard(boolean enabled) {
-            return showImeWithHardKeyboardHelper.setShowImeWithHardKeyboard(getContentResolver(), enabled);
+        public boolean setShowImeWithHardKeyboardState(boolean enabled) {
+            return showImeWithHardKeyboardHelper.setShowImeWithHardKeyboardState(getContentResolver(), enabled);
         }
     };
 
@@ -133,7 +133,7 @@ public class ButlerService extends Service {
 
         showImeWithHardKeyboardHelper = new ShowImeWithHardKeyboardHelper();
         showImeWithHardKeyboardHelper.saveShowImeState(getContentResolver());
-        showImeWithHardKeyboardHelper.setShowImeWithHardKeyboard(getContentResolver(), false);
+        showImeWithHardKeyboardHelper.setShowImeWithHardKeyboardState(getContentResolver(), false);
 
         // Install custom IActivityController to prevent system dialogs from appearing if apps crash or ANR
         NoDialogActivityController.install();

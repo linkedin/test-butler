@@ -23,8 +23,9 @@ import android.util.Log;
 /**
  * A helper class for setting the ime keyboard
  *
- * This can be used to force the hardware ime keyboard, preventing most occurences of the software keyboard showing on
- * the screen in tests
+ * This can be used to disable the software ime when the device already has a hardware keyboard. By default on API 22+
+ * emulators, the software keyboard will still be enabled even if the device is configured to include a hardware keyboard.
+ * Note that you must still configure your emulator to have a hardware keyboard before this setting will have any effect.
  *
  * Requires API 22+
  */
@@ -33,36 +34,40 @@ public class ShowImeWithHardKeyboardHelper {
     private static final String TAG = ShowImeWithHardKeyboardHelper.class.getSimpleName();
 
     // The constant in Settings.Secure is marked with @hide, so we can't use it
-    private static final String SOFT_KEYBOARD_SETTING = "show_ime_with_hard_keyboard";
+    private static final String SHOW_IME_SETTING = "show_ime_with_hard_keyboard";
 
-    private boolean originalSoftKeyboardMode;
+    private boolean originalShowImeMode;
 
     /**
-     * Should be called before starting tests, to save original ime keyboard state
+     * Should be called before starting tests, to save original ime state
      */
     void saveShowImeState(@NonNull ContentResolver contentResolver) {
         try {
-            originalSoftKeyboardMode = Settings.Secure.getInt(contentResolver, SOFT_KEYBOARD_SETTING) == 1;
+            originalShowImeMode = Settings.Secure.getInt(contentResolver, SHOW_IME_SETTING) == 1;
         } catch (Settings.SettingNotFoundException e) {
-            Log.e(TAG, "Error reading soft keyboard (" + SOFT_KEYBOARD_SETTING + ") setting!", e);
+            Log.e(TAG, "Error reading soft keyboard (" + SHOW_IME_SETTING + ") setting!", e);
         }
     }
 
     /**
-     * Should be called after testing completes, to restore original ime keyboard state
+     * Should be called after testing completes, to restore original ime state
      */
     void restoreShowImeState(@NonNull ContentResolver contentResolver) {
-        setShowImeWithHardKeyboard(contentResolver, originalSoftKeyboardMode);
+        setShowImeWithHardKeyboardState(contentResolver, originalShowImeMode);
     }
 
     /**
-     * Force the system to use the hardware keyboard
+     * Tell the system to prefer the hardware IME
+     *
+     * This method has no effect on API < 22
+     *
+     * You must have your emulator configured with a hardware IME, or this method has no effect
      * @param resolver the {@link ContentResolver} used to modify settings
      * @param enabled Whether to require the hardware keyboard or not
      * @return true if the value was set, false otherwise
      */
-    public boolean setShowImeWithHardKeyboard(@NonNull ContentResolver resolver, boolean enabled) {
+    public boolean setShowImeWithHardKeyboardState(@NonNull ContentResolver resolver, boolean enabled) {
         int val = enabled ? 1 : 0;
-        return Settings.Secure.putInt(resolver, SOFT_KEYBOARD_SETTING, val);
+        return Settings.Secure.putInt(resolver, SHOW_IME_SETTING, val);
     }
 }

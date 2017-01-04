@@ -34,14 +34,13 @@ import static org.junit.Assert.assertNotEquals;
 
 public class ShowImeWithHardKeyboardHelperTest {
 
-    @Rule
-    public ActivityTestRule<MainActivity> testRule = new ActivityTestRule<>(MainActivity.class);
+    @Rule public ActivityTestRule<MainActivity> testRule = new ActivityTestRule<>(MainActivity.class);
 
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.LOLLIPOP_MR1)
     @Test
     public void keyboardDoesNotShow() {
-        TestButler.setSoftKeyboardState(false);
-        EditText editText = (EditText)testRule.getActivity().findViewById(R.id.editText);
+        TestButler.setShowImeWithHardKeyboardState(false);
+        EditText editText = (EditText) testRule.getActivity().findViewById(R.id.editText);
 
         int before[] = new int[2];
         editText.getLocationOnScreen(before);
@@ -59,8 +58,8 @@ public class ShowImeWithHardKeyboardHelperTest {
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.LOLLIPOP_MR1)
     @Test
     public void keyboardDoesShow() {
-        TestButler.setSoftKeyboardState(true);
-        EditText editText = (EditText)testRule.getActivity().findViewById(R.id.editText);
+        TestButler.setShowImeWithHardKeyboardState(true);
+        EditText editText = (EditText) testRule.getActivity().findViewById(R.id.editText);
 
         int before[] = new int[2];
         editText.getLocationOnScreen(before);

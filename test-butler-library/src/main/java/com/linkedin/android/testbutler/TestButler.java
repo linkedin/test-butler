@@ -262,13 +262,16 @@ public class TestButler {
     }
 
     /**
-     * Enable or disable the system software keyboard
+     * Tell the system to prefer the hardware IME
      *
-     * @param enabled What state the software keyboard should be set to
+     * This method has no effect on API < 22
+     *
+     * You must have your emulator configured with a hardware IME, or this method has no effect
+     * @param enabled Whether to require the hardware keyboard or not
      */
-    public static void setSoftKeyboardState(boolean enabled) {
+    public static void setShowImeWithHardKeyboardState(boolean enabled) {
         try {
-            if (!butlerApi.setShowImeWithHardKeyboard(enabled)) {
+            if (!butlerApi.setShowImeWithHardKeyboardState(enabled)) {
                 throw new IllegalStateException("Failed to set software keyboard!");
             }
         } catch (RemoteException e) {
