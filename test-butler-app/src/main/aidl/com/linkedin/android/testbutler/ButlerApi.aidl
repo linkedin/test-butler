@@ -33,4 +33,6 @@ interface ButlerApi {
     boolean grantPermission(String packageName, String permission);
 
     boolean setSpellCheckerState(boolean enabled);
+
+    boolean setShowImeWithHardKeyboardState(boolean enabled);
 }

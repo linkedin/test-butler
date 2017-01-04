@@ -35,12 +35,11 @@ public class SpellCheckerDisabler {
     /**
      * Should be called before starting tests, to save original spell checker state
      */
-    @SuppressWarnings("deprecation")
     void saveSpellCheckerState(@NonNull ContentResolver contentResolver) {
         try {
             originalSpellCheckerMode = Settings.Secure.getInt(contentResolver, SPELL_CHECKER_SETTING) == 1;
         } catch (Settings.SettingNotFoundException e) {
-            Log.e(TAG, "Error reading spell checker setting!", e);
+            Log.e(TAG, "Error reading spell checker (" + SPELL_CHECKER_SETTING + ") setting!", e);
         }
     }
 

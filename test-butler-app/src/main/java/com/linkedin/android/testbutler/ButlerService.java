@@ -43,6 +43,7 @@ public class ButlerService extends Service {
     private GsmDataDisabler gsmDataDisabler;
     private PermissionGranter permissionGranter;
     private SpellCheckerDisabler spellCheckerDisabler;
+    private ShowImeWithHardKeyboardHelper showImeWithHardKeyboardHelper;
 
     private WifiManager.WifiLock wifiLock;
     private PowerManager.WakeLock wakeLock;
@@ -78,6 +79,11 @@ public class ButlerService extends Service {
         @Override
         public boolean setSpellCheckerState(boolean enabled) {
             return spellCheckerDisabler.setSpellChecker(getContentResolver(), enabled);
+        }
+
+        @Override
+        public boolean setShowImeWithHardKeyboardState(boolean enabled) {
+            return showImeWithHardKeyboardHelper.setShowImeWithHardKeyboardState(getContentResolver(), enabled);
         }
     };
 
@@ -125,6 +131,10 @@ public class ButlerService extends Service {
         // Disable spell checker by default
         spellCheckerDisabler.setSpellChecker(getContentResolver(), false);
 
+        showImeWithHardKeyboardHelper = new ShowImeWithHardKeyboardHelper();
+        showImeWithHardKeyboardHelper.saveShowImeState(getContentResolver());
+        showImeWithHardKeyboardHelper.setShowImeWithHardKeyboardState(getContentResolver(), false);
+
         // Install custom IActivityController to prevent system dialogs from appearing if apps crash or ANR
         NoDialogActivityController.install();
     }
@@ -154,6 +164,9 @@ public class ButlerService extends Service {
 
         // Reset the spell checker to the original state
         spellCheckerDisabler.restoreSpellCheckerState(getContentResolver());
+
+        // Restore the original keyboard setting
+        showImeWithHardKeyboardHelper.restoreShowImeState(getContentResolver());
     }
 
     @Nullable

@@ -251,10 +251,28 @@ public class TestButler {
      *
      * @param enabled What state the spell checker should be set to
      */
-    public static void setSpellCheckerEnabled(boolean enabled) {
+    public static void setSpellCheckerState(boolean enabled) {
         try {
             if (!butlerApi.setSpellCheckerState(enabled)) {
                 throw new IllegalStateException("Failed to set spell checker!");
+            }
+        } catch (RemoteException e) {
+            throw new IllegalStateException("Failed to communicate with ButlerService", e);
+        }
+    }
+
+    /**
+     * Tell the system to prefer the hardware IME
+     *
+     * This method has no effect on API < 22
+     *
+     * You must have your emulator configured with a hardware IME, or this method has no effect
+     * @param enabled Whether to require the hardware keyboard or not
+     */
+    public static void setShowImeWithHardKeyboardState(boolean enabled) {
+        try {
+            if (!butlerApi.setShowImeWithHardKeyboardState(enabled)) {
+                throw new IllegalStateException("Failed to set software keyboard!");
             }
         } catch (RemoteException e) {
             throw new IllegalStateException("Failed to communicate with ButlerService", e);
