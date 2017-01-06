@@ -26,7 +26,7 @@ android {
         textOutput 'stdout'
         abortOnError true
         warningsAsErrors true
-        disable 'OldTargetApi','GradleDependency'
+        disable 'OldTargetApi', 'GradleDependency'
     }
 }
 
@@ -49,7 +49,7 @@ publishing {
     publications {
         lib(MavenPublication) {
             artifact("$buildDir/outputs/aar/${project.getName()}-release.aar") {
-                builtBy assembleRelease
+                builtBy assemble
             }
 
             artifact sourcesJar

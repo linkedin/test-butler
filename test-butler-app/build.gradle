@@ -57,7 +57,7 @@ publishing {
         apk(MavenPublication) {
 
             artifact("$buildDir/outputs/apk/${project.getName()}-release.apk") {
-                builtBy assembleRelease
+                builtBy assemble
             }
 
             artifact sourcesJar
