@@ -59,7 +59,7 @@ public class ShowImeWithHardKeyboardHelper {
     /**
      * Tell the system to prefer the hardware IME
      *
-     * This method has no effect on API < 22
+     * This method has no effect on api levels below API 22
      *
      * You must have your emulator configured with a hardware IME, or this method has no effect
      * @param resolver the {@link ContentResolver} used to modify settings
