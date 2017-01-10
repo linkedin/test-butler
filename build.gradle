@@ -36,7 +36,7 @@ artifactory {
         password = System.getenv('ARTIFACTORY_KEY') ?: ""
 
         defaults {
-            publications 'apk', 'lib'
+            publications 'apk', 'lib', 'ivyLib', 'ivyApk'
         }
 
         publishArtifacts = true
