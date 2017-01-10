@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'ivy-publish'
 apply plugin: 'maven-publish'
 
 version = VERSION_NAME
@@ -47,10 +48,14 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 
 publishing {
     publications {
+        ivyLib(IvyPublication) {
+          from new org.gradle.api.internal.java.JavaLibrary(new org.gradle.api.internal.artifacts.publish.DefaultPublishArtifact(project.getName(), 'aar', 'aar', null, new Date(), new File("$buildDir/outputs/aar/${project.getName()}-release.aar"), assemble), project.configurations.compile.getAllDependencies())
+          artifact sourcesJar
+          artifact javadocJar
+        }
+
         lib(MavenPublication) {
-            artifact("$buildDir/outputs/aar/${project.getName()}-release.aar") {
-                builtBy assemble
-            }
+          from new org.gradle.api.internal.java.JavaLibrary(new org.gradle.api.internal.artifacts.publish.DefaultPublishArtifact(project.getName(), 'aar', 'aar', null, new Date(), new File("$buildDir/outputs/aar/${project.getName()}-release.aar"), assemble), project.configurations.compile.getAllDependencies())
 
             artifact sourcesJar
             artifact javadocJar
@@ -78,17 +83,6 @@ publishing {
                             id 'com.linkedin'
                             name 'LinkedIn Corp'
                             email ''
-                        }
-                    }
-
-                    dependencies {
-                        configurations.compile.allDependencies.each { ModuleDependency dp ->
-                            dependency {
-                                resolveStrategy = Closure.DELEGATE_ONLY
-                                groupId dp.group
-                                artifactId dp.name
-                                version dp.version
-                            }
                         }
                     }
                 }
