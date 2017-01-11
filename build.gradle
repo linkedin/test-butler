@@ -31,9 +31,17 @@ artifactoryPublish.skip = true
 artifactory {
     contextUrl = 'https://linkedin.jfrog.io/linkedin'
     publish {
-        repoKey = 'test-butler'
-        username = System.getenv('ARTIFACTORY_USER') ?: ""
-        password = System.getenv('ARTIFACTORY_KEY') ?: ""
+        repository {
+            repoKey = 'test-butler'
+            username = System.getenv('ARTIFACTORY_USER') ?: ""
+            password = System.getenv('ARTIFACTORY_KEY') ?: ""
+
+            ivy {
+                ivyLayout = "[organisation]/[module]/[revision]/[module]-[revision].ivy"
+                artifactLayout = "[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"
+                mavenCompatible = true
+            }
+        }
 
         defaults {
             publications 'apk', 'lib', 'ivyLib', 'ivyApk'
