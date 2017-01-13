@@ -1,6 +1,6 @@
 # Change Log
 
-## Version 1.2.0 (2016-01-06)
+## Version 1.2.0 (2017-01-06)
 
 - Add api for enabling and disabling the spell checker during tests
 - Disable spell checker by default during tests
