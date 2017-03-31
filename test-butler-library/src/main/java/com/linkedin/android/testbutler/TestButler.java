@@ -306,6 +306,21 @@ public class TestButler {
         }
     }
 
+    /**
+     * Enable or disable immersive mode confirmation
+     *
+     * @param enabled What state the immersive mode confirmation should be set to
+     */
+    public static void setImmersiveModeConfirmation(boolean enabled) {
+        try {
+            if (!butlerApi.setImmersiveModeConfirmation(enabled)) {
+                throw new IllegalStateException("Failed to set immersive mode confirmation!");
+            }
+        } catch (RemoteException e) {
+            throw new IllegalStateException("Failed to communicate with ButlerService", e);
+        }
+    }
+
     private static void verifyApiReady() {
         if (butlerApi == null) {
             throw new IllegalStateException("ButlerService is not started!");

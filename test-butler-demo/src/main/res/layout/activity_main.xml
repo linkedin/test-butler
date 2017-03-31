@@ -22,6 +22,31 @@
     android:layout_height="match_parent"
     tools:context="com.linkedin.android.testbutler.demo.MainActivity">
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_switch_to_immersive_mode"
+        android:layout_centerInParent="true"
+        android:id="@+id/button_switch_to_immersive_mode"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_call_woodhouse"
+        android:layout_below="@id/button_switch_to_immersive_mode"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:id="@+id/button_call_butler"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/fetch_the_rug"
+        android:layout_below="@id/button_call_butler"
+        android:gravity="center"
+        android:visibility="gone"
+        android:id="@+id/text_butler_response"/>
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
