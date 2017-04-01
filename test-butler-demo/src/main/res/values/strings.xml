@@ -15,4 +15,7 @@
 -->
 <resources>
     <string name="app_name">Test Butler Demo</string>
+    <string name="button_switch_to_immersive_mode">Switch to Immersive Mode</string>
+    <string name="button_call_woodhouse">Call Woodhouse</string>
+    <string name="fetch_the_rug">Sir, I have fetched the rug.</string>
 </resources>

@@ -44,6 +44,7 @@ public class ButlerService extends Service {
     private PermissionGranter permissionGranter;
     private SpellCheckerDisabler spellCheckerDisabler;
     private ShowImeWithHardKeyboardHelper showImeWithHardKeyboardHelper;
+    private ImmersiveModeConfirmationDisabler immersiveModeDialogDisabler;
 
     private WifiManager.WifiLock wifiLock;
     private PowerManager.WakeLock wakeLock;
@@ -84,6 +85,11 @@ public class ButlerService extends Service {
         @Override
         public boolean setShowImeWithHardKeyboardState(boolean enabled) {
             return showImeWithHardKeyboardHelper.setShowImeWithHardKeyboardState(getContentResolver(), enabled);
+        }
+
+        @Override
+        public boolean setImmersiveModeConfirmation(boolean enabled) throws RemoteException {
+            return immersiveModeDialogDisabler.setState(enabled);
         }
     };
 
@@ -135,6 +141,8 @@ public class ButlerService extends Service {
         showImeWithHardKeyboardHelper.saveShowImeState(getContentResolver());
         showImeWithHardKeyboardHelper.setShowImeWithHardKeyboardState(getContentResolver(), false);
 
+        immersiveModeDialogDisabler = new ImmersiveModeConfirmationDisabler(getContentResolver());
+
         // Install custom IActivityController to prevent system dialogs from appearing if apps crash or ANR
         NoDialogActivityController.install();
     }
@@ -167,6 +175,9 @@ public class ButlerService extends Service {
 
         // Restore the original keyboard setting
         showImeWithHardKeyboardHelper.restoreShowImeState(getContentResolver());
+
+        // Restore immersive mode confirmation
+        immersiveModeDialogDisabler.restoreOriginalState();
     }
 
     @Nullable
