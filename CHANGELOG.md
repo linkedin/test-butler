@@ -1,6 +1,6 @@
 # Change Log
 
-## Version 1.3.0-SNAPSHOT
+## Version 1.3.0 (2017-04-05)
 
 - Add api for enabling and disabling the immersive mode confirmation
 
