@@ -1,10 +1,10 @@
 <!-- Note: sharedUserId is required to make this app run as the same Linux user as system apps -->
 <manifest
     package="com.linkedin.android.testbutler"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:sharedUserId="android.uid.system"
-    tools:ignore="ProtectedPermissions">
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
+          android:sharedUserId="android.uid.system"
+          tools:ignore="ProtectedPermissions">
 
     <!-- Required for adding a custom IActivityController class -->
     <uses-permission android:name="android.permission.SET_ACTIVITY_WATCHER"/>
@@ -34,6 +34,9 @@
             android:exported="true"
             tools:ignore="ExportedService"/>
 
+        <receiver
+            android:name=".ButlerReceiver"
+            android:exported="false"/>
     </application>
 
 </manifest>
