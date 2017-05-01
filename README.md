@@ -14,12 +14,15 @@ For more background, read the Test Butler announcement [blog post](https://engin
   * **Disables animations** so Espresso tests can run properly.
   * **Disables crash & ANR dialogs** so a system app misbehaving won't trigger a popup that causes your UI tests to fail.
   * **Locks the keyguard, WiFi radio, and CPU** to ensure they don't go to sleep unexpectedly while tests are running.
+  * **Disables system spell checker** to avoid redline highlights and text auto correction.
 * Handles changing global emulator settings and holds relevant permissions so your app doesn't have to.
   * **Enable/disable WiFi:** Test Butler allows tests to simulate a situation where WiFi is not connected or changes availability at some point.
   * **Change device orientation:** Tests can manually set the orientation of the device during test execution.
   * **Set location services mode:** Test Butler lets your code simulate different location services modes, like battery saver or high accuracy.
   * **Set application locale:** Tests can set a custom `Locale` object for their application to simulate running the app in another language.
   * **Grant runtime permissions:** Tests can grant Marshmallow's runtime permissions to their application directly from test code.
+  * **Use hardware IME:** Tests can tell the system to prefer the hardware IME.
+  * **Control immersive mode confirmation:** Tests can enable or disable immersive mode confirmation.
 
 ## How does it work?
 
