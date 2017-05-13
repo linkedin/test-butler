@@ -5,7 +5,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.2'
+        classpath 'com.android.tools.build:gradle:2.3.2'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4'
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.0"
@@ -20,11 +20,11 @@ allprojects {
 }
 
 ext {
-    compileSdkVersion = 24
-    buildToolsVersion = '24.0.2'
+    compileSdkVersion = 25
+    buildToolsVersion = '25.0.2'
     minSdkVersion = 14
-    targetSdkVersion = 24
-    supportLibrariesVersion = '24.2.1'
+    targetSdkVersion = 25
+    supportLibrariesVersion = '25.3.1'
 }
 
 artifactoryPublish.skip = true
