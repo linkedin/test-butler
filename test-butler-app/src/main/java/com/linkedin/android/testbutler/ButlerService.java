@@ -53,7 +53,7 @@ public class ButlerService extends Service {
     private final ButlerApi.Stub butlerApi = new ButlerApi.Stub() {
         @Override
         public boolean setWifiState(boolean enabled) throws RemoteException {
-            WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+            WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
             return wifiManager.setWifiEnabled(enabled);
         }
 
@@ -113,7 +113,7 @@ public class ButlerService extends Service {
 
         // Acquire a WifiLock to prevent wifi from turning off and breaking tests
         // NOTE: holding a WifiLock does NOT override a call to setWifiEnabled(false)
-        WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
         wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "ButlerWifiLock");
         wifiLock.acquire();
 
