@@ -67,6 +67,14 @@ class NoDialogActivityController extends IActivityController.Stub {
     }
 
     @Override
+    public int appEarlyNotResponding(String processName, int pid, String annotation) throws RemoteException {
+        Log.v(TAG, "appEarlyNotResponding: " + processName + ":" + pid + " " + annotation);
+        // return 0 to continue with normal ANR processing
+        // we'll block the ANR dialog from appearing later, when appNotResponding is called
+        return 0;
+    }
+
+    @Override
     public int appNotResponding(String processName, int pid, String processStats) throws RemoteException {
         Log.v(TAG, "appNotResponding: " + processName + ":" + pid + " " + processStats);
         // return -1 to kill the ANR-ing app immediately and prevent the system dialog from appearing
