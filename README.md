@@ -108,3 +108,4 @@ public void teardown() {
   TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_HIGH_ACCURACY);
 }
 ```
+NB: See [gotchyas](#any-gotchas-to-look-out-for) above to see why `@BeforeClass` & `@AfterClass` aren't used here. 
