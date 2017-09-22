@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.os.Build;
 
 import java.lang.reflect.Method;
 
@@ -43,6 +44,8 @@ import java.lang.reflect.Method;
  */
 class NoDialogActivityController extends IActivityController.Stub {
     private static final String TAG = NoDialogActivityController.class.getSimpleName();
+
+    private static final int BUILD_VERSION_CODES_O = 26 ;
 
     @Override
     public boolean activityStarting(Intent intent, String pkg) throws RemoteException {
@@ -108,9 +111,18 @@ class NoDialogActivityController extends IActivityController.Stub {
      */
     private static void setActivityController(@Nullable IActivityController activityController) {
         try {
-            Class<?> amClass = Class.forName("android.app.ActivityManagerNative");
-            Method getDefault = amClass.getMethod("getDefault");
-            Object am = getDefault.invoke(null);
+            //on Android O, ActivityManagerNative.getDefault() method will be removed soon,
+            //should use ActivityManager.getService instead.
+            Object am ;
+            if (Build.VERSION.SDK_INT >= BUILD_VERSION_CODES_O) {
+                Class<?> amClass = Class.forName("android.app.ActivityManager");
+                Method getService = amClass.getMethod("getService");
+                am = getService.invoke(null);
+            }else{
+                Class<?> amClass = Class.forName("android.app.ActivityManagerNative");
+                Method getDefault = amClass.getMethod("getDefault");
+                am = getDefault.invoke(null);
+            }
             Method setMethod = am.getClass().getMethod("setActivityController", IActivityController.class);
             setMethod.invoke(am, activityController);
         } catch (Throwable e) {
