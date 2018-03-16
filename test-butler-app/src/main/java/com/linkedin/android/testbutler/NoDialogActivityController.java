@@ -113,20 +113,40 @@ class NoDialogActivityController extends IActivityController.Stub {
         try {
             //on Android O, ActivityManagerNative.getDefault() method will be removed soon,
             //should use ActivityManager.getService instead.
-            Object am ;
+            Object am;
             if (Build.VERSION.SDK_INT >= BUILD_VERSION_CODES_O) {
                 Class<?> amClass = Class.forName("android.app.ActivityManager");
                 Method getService = amClass.getMethod("getService");
                 am = getService.invoke(null);
-            }else{
+            } else{
                 Class<?> amClass = Class.forName("android.app.ActivityManagerNative");
                 Method getDefault = amClass.getMethod("getDefault");
                 am = getDefault.invoke(null);
             }
-            Method setMethod = am.getClass().getMethod("setActivityController", IActivityController.class);
-            setMethod.invoke(am, activityController);
+            // attempt to set the activity controller
+            attemptSetController(am, activityController);
         } catch (Throwable e) {
             Log.e(TAG, "Failed to install custom IActivityController: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Attempts to set the activity controller
+     *
+     * API 25, in some versions, contains an extra param in setActivityController
+     * If attempting without the updated params does not work, attempt with the new params
+     *
+     * @throws Throwable if the activity controller cannot be set
+     */
+    private static void attemptSetController(final Object am, @Nullable IActivityController activityController) throws Throwable {
+        Method setMethod;
+        try {
+            setMethod = am.getClass().getMethod("setActivityController", IActivityController.class);
+            setMethod.invoke(am, activityController);
+        } catch (Throwable e) {
+            setMethod = am.getClass().getMethod("setActivityController", IActivityController.class, boolean.class);
+            final Object[] params = {activityController, false};
+            setMethod.invoke(am, params);
         }
     }
 }
