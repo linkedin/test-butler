@@ -133,8 +133,9 @@ class NoDialogActivityController extends IActivityController.Stub {
     /**
      * Attempts to set the activity controller
      *
-     * API 25, in some versions, contains an extra param in setActivityController
-     * If attempting without the updated params does not work, attempt with the new params
+     * On newer versions of Android, there is an extra parameter in setActivityController to
+     * identify if we're in monkey testing mode. See this commit:
+     * https://android.googlesource.com/platform/frameworks/base/+/4a18c26609df2c4230885acb64e92fb51aba70df%5E%21/#F0
      *
      * @throws Throwable if the activity controller cannot be set
      */
