@@ -1,8 +1,13 @@
 # Change Log
 
+## Version 1.3.2 (2018-03-24)
+
+- Use new method for setting IActivityController on API 26+ [#70](https://github.com/linkedin/test-butler/pull/70)
+- Fix crash when setting IActivityController on API 25+ [#66](https://github.com/linkedin/test-butler/issues/66)
+
 ## Version 1.3.1 (2017-05-25)
 
-- Fix crash due to missing appEarlyNotResponding method (#60)
+- Fix crash due to missing appEarlyNotResponding method [#60](https://github.com/linkedin/test-butler/issues/60)
 
 ## Version 1.3.0 (2017-04-05)
 
