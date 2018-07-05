@@ -45,6 +45,7 @@ public class ButlerService extends Service {
     private SpellCheckerDisabler spellCheckerDisabler;
     private ShowImeWithHardKeyboardHelper showImeWithHardKeyboardHelper;
     private ImmersiveModeConfirmationDisabler immersiveModeDialogDisabler;
+    private AlwaysFinishActivitiesChanger alwaysFinishActivitiesChanger;
 
     private WifiManager.WifiLock wifiLock;
     private PowerManager.WakeLock wakeLock;
@@ -90,6 +91,11 @@ public class ButlerService extends Service {
         @Override
         public boolean setImmersiveModeConfirmation(boolean enabled) throws RemoteException {
             return immersiveModeDialogDisabler.setState(enabled);
+        }
+
+        @Override
+        public boolean setAlwaysFinishActivitiesState(boolean enabled) throws RemoteException {
+            return alwaysFinishActivitiesChanger.setAlwaysFinishActivitiesState(getContentResolver(), enabled);
         }
     };
 
@@ -143,6 +149,9 @@ public class ButlerService extends Service {
 
         immersiveModeDialogDisabler = new ImmersiveModeConfirmationDisabler(getContentResolver());
 
+        alwaysFinishActivitiesChanger = new AlwaysFinishActivitiesChanger();
+        alwaysFinishActivitiesChanger.saveAlwaysFinishActivitiesState(getContentResolver());
+
         // Install custom IActivityController to prevent system dialogs from appearing if apps crash or ANR
         NoDialogActivityController.install();
     }
@@ -178,6 +187,9 @@ public class ButlerService extends Service {
 
         // Restore immersive mode confirmation
         immersiveModeDialogDisabler.restoreOriginalState();
+
+        // Restore always finish activities state to whatever it originally was
+        alwaysFinishActivitiesChanger.restoreAlwaysFinishActivitiesState(getContentResolver());
     }
 
     @Nullable
