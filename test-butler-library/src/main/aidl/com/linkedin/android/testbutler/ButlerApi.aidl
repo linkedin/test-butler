@@ -37,4 +37,6 @@ interface ButlerApi {
     boolean setShowImeWithHardKeyboardState(boolean enabled);
 
     boolean setImmersiveModeConfirmation(boolean enabled);
+
+    boolean setAlwaysFinishActivitiesState(boolean enabled);
 }

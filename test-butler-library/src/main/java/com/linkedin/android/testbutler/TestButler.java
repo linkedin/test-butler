@@ -321,6 +321,22 @@ public class TestButler {
         }
     }
 
+    /**
+     * Enable or disable always finish activities setting on the emulator
+     *
+     * @param enabled What state the always finish activities setting should be set to
+     */
+    public static void setAlwaysFinishActivities(boolean enabled) {
+        verifyApiReady();
+        try {
+            if (!butlerApi.setAlwaysFinishActivitiesState(enabled)) {
+                throw new IllegalStateException("Failed to set always finish activities!");
+            }
+        } catch (RemoteException e) {
+            throw new IllegalStateException("Failed to communicate with ButlerService", e);
+        }
+    }
+
     private static void verifyApiReady() {
         if (butlerApi == null) {
             throw new IllegalStateException("ButlerService is not started!");
