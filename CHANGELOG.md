@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 1.4.0 (2018-07-30)
+
+- Add support for changing "Always finish activities" dev setting [#78](https://github.com/linkedin/test-butler/issues/78)
+
 ## Version 1.3.2 (2018-03-24)
 
 - Use new method for setting IActivityController on API 26+ [#70](https://github.com/linkedin/test-butler/pull/70)
