@@ -17,6 +17,7 @@ package com.linkedin.android.testbutler;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
+import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -54,12 +55,20 @@ class AlwaysFinishActivitiesChanger
      * @return true if the new value was set, false on database errors
      */
     boolean setAlwaysFinishActivitiesState(@NonNull ContentResolver contentResolver, boolean value) {
-        return Settings.Global.putInt(contentResolver, Settings.Global.ALWAYS_FINISH_ACTIVITIES, value ? 1 : 0);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return Settings.System.putInt(contentResolver, Settings.System.ALWAYS_FINISH_ACTIVITIES, value ? 1 : 0);
+        } else {
+            return Settings.Global.putInt(contentResolver, Settings.Global.ALWAYS_FINISH_ACTIVITIES, value ? 1 : 0);
+        }
     }
 
-    public static boolean getAlwaysFinishActivitiesState(@NonNull ContentResolver contentResolver) {
+    private boolean getAlwaysFinishActivitiesState(@NonNull ContentResolver contentResolver) {
         try {
-            return Settings.Global.getInt(contentResolver, Settings.Global.ALWAYS_FINISH_ACTIVITIES) != 0;
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                return Settings.System.getInt(contentResolver, Settings.System.ALWAYS_FINISH_ACTIVITIES) != 0;
+            } else {
+                return Settings.Global.getInt(contentResolver, Settings.Global.ALWAYS_FINISH_ACTIVITIES) != 0;
+            }
         } catch (Settings.SettingNotFoundException e) {
             Log.e(TAG, "Error reading always finish activities settings!", e);
             return false;
