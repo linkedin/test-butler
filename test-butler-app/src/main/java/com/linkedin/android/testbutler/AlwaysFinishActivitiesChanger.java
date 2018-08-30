@@ -25,7 +25,6 @@ import android.util.Log;
 /**
  * Helper class for modifying the always finish activities setting on the emulator
  */
-@SuppressLint("InlinedApi")
 class AlwaysFinishActivitiesChanger
 {
 
