@@ -40,7 +40,7 @@ public class AlwaysFinishActivitiesChangerTest {
     }
 
     @Test
-    public void alwaysLeavePassiveProviderEnabled() {
+    public void changeAlwaysFinishActivitiesSetting() {
         TestButler.setAlwaysFinishActivities(true);
         assertTrue(getAlwaysFinishActivitiesState(contentResolver));
 
