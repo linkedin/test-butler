@@ -2,12 +2,13 @@ import com.linkedin.gradle.DistributeTask
 
 buildscript {
     repositories {
+        google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.2'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4'
+        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.0"
     }
 }
@@ -20,11 +21,11 @@ allprojects {
 }
 
 ext {
-    compileSdkVersion = 25
-    buildToolsVersion = '25.0.2'
+    compileSdkVersion = 28
+    buildToolsVersion = '28.0.3'
     minSdkVersion = 14
-    targetSdkVersion = 25
-    supportLibrariesVersion = '25.3.1'
+    targetSdkVersion = 27
+    supportLibrariesVersion = '27.1.1'
 }
 
 artifactoryPublish.skip = true
