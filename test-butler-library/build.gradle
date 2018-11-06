@@ -92,9 +92,11 @@ publishing {
 }
 
 repositories {
+    google()
     jcenter()
 }
 
 dependencies {
-    provided "com.android.support:support-annotations:${rootProject.ext.supportLibrariesVersion}"
+    compileOnly "com.android.support:support-annotations:${rootProject.ext.supportLibrariesVersion}"
+    implementation 'junit:junit:4.12'
 }

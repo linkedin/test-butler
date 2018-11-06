@@ -23,16 +23,17 @@ android {
 }
 
 repositories {
+    google()
     jcenter()
 }
 
 dependencies {
-    androidTestCompile project(':test-butler-library')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation project(':test-butler-library')
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibrariesVersion}"
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibrariesVersion}"
 
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 }

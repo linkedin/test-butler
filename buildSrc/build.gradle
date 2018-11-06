@@ -7,6 +7,18 @@ repositories {
     jcenter()
 }
 
+/*
+   maven plug-in transitively brings in guava 18.0 which creates errors in build due to missing method.
+   We will have to force the version to at least 22 to resolve it.
+ */
+configurations.runtimeClasspath {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'com.google.guava' && details.requested.name == 'guava') {
+            details.useVersion '22.0'
+        }
+    }
+}
+
 dependencies {
     compile gradleApi()
     compile localGroovy()
