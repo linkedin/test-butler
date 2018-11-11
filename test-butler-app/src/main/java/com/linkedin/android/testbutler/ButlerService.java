@@ -132,7 +132,7 @@ public class ButlerService extends Service {
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK
                 | PowerManager.ACQUIRE_CAUSES_WAKEUP
-                | PowerManager.ON_AFTER_RELEASE, "ButlerWakeLock");
+                | PowerManager.ON_AFTER_RELEASE, "TestButlerApp:WakeLock");
         wakeLock.acquire();
 
         gsmDataDisabler = new GsmDataDisabler();
