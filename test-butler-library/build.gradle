@@ -38,9 +38,9 @@ task sourcesJar(type: Jar) {
 
 task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
-    doFirst {
+    android.libraryVariants.matching { variant -> variant.name == 'debug'}.all { variant ->
         classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-        classpath += project.android.libraryVariants.toList().first().javaCompile.classpath
+        classpath += variant.getCompileClasspath(null)
     }
 }
 
