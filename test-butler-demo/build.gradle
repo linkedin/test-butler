@@ -29,11 +29,11 @@ repositories {
 
 dependencies {
     androidTestImplementation project(':test-butler-library')
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0')
+    androidTestImplementation('androidx.test:rules:1.1.0')
+    androidTestImplementation("androidx.test:core:${rootProject.ext.supportLibrariesVersion}")
 
-    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibrariesVersion}"
+    implementation "androidx.appcompat:appcompat:${rootProject.ext.supportLibrariesVersion}"
 
     testImplementation 'junit:junit:4.12'
 }

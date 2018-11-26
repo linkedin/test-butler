@@ -19,7 +19,6 @@ package com.linkedin.android.testbutler.demo;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.test.InstrumentationRegistry;
 
 import com.linkedin.android.testbutler.TestButler;
 import com.linkedin.android.testbutler.demo.utils.Waiter;
@@ -27,6 +26,8 @@ import com.linkedin.android.testbutler.demo.utils.Waiter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import androidx.test.core.app.ApplicationProvider;
 
 import static junit.framework.Assert.assertTrue;
 
@@ -37,7 +38,7 @@ public class GsmEnablerTest {
 
     @Before
     public void setup() {
-        Context context = InstrumentationRegistry.getTargetContext();
+        Context context = ApplicationProvider.getApplicationContext();
         connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 

@@ -18,7 +18,7 @@ package com.linkedin.android.testbutler;
 import android.app.IActivityController;
 import android.content.Intent;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 import android.os.Build;
 

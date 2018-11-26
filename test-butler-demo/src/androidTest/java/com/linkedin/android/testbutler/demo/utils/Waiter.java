@@ -15,7 +15,7 @@
  */
 package com.linkedin.android.testbutler.demo.utils;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class Waiter {
     public static boolean wait(int retryCount, @NonNull DelayDependOnCount delayDependOnCount, @NonNull Predicate predicate) {

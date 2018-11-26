@@ -100,6 +100,6 @@ repositories {
 }
 
 dependencies {
-    compileOnly "com.android.support:support-annotations:${rootProject.ext.supportLibrariesVersion}"
+    compileOnly "androidx.annotation:annotation:${rootProject.ext.supportLibrariesVersion}"
     implementation 'junit:junit:4.12'
 }

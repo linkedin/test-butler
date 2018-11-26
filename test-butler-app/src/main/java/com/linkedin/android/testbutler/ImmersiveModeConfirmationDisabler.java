@@ -18,7 +18,7 @@ package com.linkedin.android.testbutler;
 
 import android.content.ContentResolver;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 

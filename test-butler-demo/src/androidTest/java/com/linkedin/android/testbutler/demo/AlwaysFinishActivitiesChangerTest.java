@@ -18,13 +18,14 @@ package com.linkedin.android.testbutler.demo;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.test.InstrumentationRegistry;
 
 import com.linkedin.android.testbutler.TestButler;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import androidx.annotation.NonNull;
+import androidx.test.core.app.ApplicationProvider;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -35,7 +36,7 @@ public class AlwaysFinishActivitiesChangerTest {
 
     @Before
     public void setup() {
-        Context context = InstrumentationRegistry.getTargetContext();
+        Context context = ApplicationProvider.getApplicationContext();
         contentResolver = context.getContentResolver();
     }
 
