@@ -20,7 +20,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Build;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;

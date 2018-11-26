@@ -15,14 +15,16 @@
  */
 package com.linkedin.android.testbutler.demo;
 
-import android.support.test.InstrumentationRegistry;
 import com.linkedin.android.testbutler.TestButler;
+
 import org.junit.Test;
+
+import androidx.test.core.app.ApplicationProvider;
 
 public class AnimationDisablerTest {
 
     @Test
     public void disableAnimations() throws Exception {
-        TestButler.verifyAnimationsDisabled(InstrumentationRegistry.getTargetContext());
+        TestButler.verifyAnimationsDisabled(ApplicationProvider.getApplicationContext());
     }
 }

@@ -24,8 +24,8 @@ ext {
     compileSdkVersion = 28
     buildToolsVersion = '28.0.3'
     minSdkVersion = 14
-    targetSdkVersion = 27
-    supportLibrariesVersion = '27.1.1'
+    targetSdkVersion = 28
+    supportLibrariesVersion = '1.0.0'
 }
 
 artifactoryPublish.skip = true

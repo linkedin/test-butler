@@ -18,7 +18,7 @@ package com.linkedin.android.testbutler.demo;
 import android.content.Context;
 import android.location.LocationManager;
 import android.provider.Settings;
-import android.support.test.InstrumentationRegistry;
+import androidx.test.core.app.ApplicationProvider;
 import com.linkedin.android.testbutler.TestButler;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +32,7 @@ public class LocationServicesChangerTest {
 
     @Before
     public void setup() {
-        Context context = InstrumentationRegistry.getTargetContext();
+        Context context = ApplicationProvider.getApplicationContext();
         manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     }
 

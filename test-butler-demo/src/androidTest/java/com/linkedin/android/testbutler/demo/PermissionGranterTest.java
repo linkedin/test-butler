@@ -19,11 +19,14 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.filters.SdkSuppress;
-import android.support.v4.content.ContextCompat;
+
 import com.linkedin.android.testbutler.TestButler;
+
 import org.junit.Test;
+
+import androidx.core.content.ContextCompat;
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.filters.SdkSuppress;
 
 import static org.junit.Assert.assertEquals;
 
@@ -35,7 +38,7 @@ public class PermissionGranterTest {
     @Test
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.M)
     public void successfullyGrantPermission() {
-        Context context = InstrumentationRegistry.getTargetContext();
+        Context context = ApplicationProvider.getApplicationContext();
         String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
         long result = ContextCompat.checkSelfPermission(context, permission);
@@ -50,7 +53,7 @@ public class PermissionGranterTest {
     @Test(expected = IllegalArgumentException.class)
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.M)
     public void failWhenTryingToGrantNonDangerousPermission() {
-        Context context = InstrumentationRegistry.getTargetContext();
+        Context context = ApplicationProvider.getApplicationContext();
         String permission = Manifest.permission.ACCESS_WIFI_STATE;
 
         TestButler.grantPermission(context, permission);
@@ -59,7 +62,7 @@ public class PermissionGranterTest {
     @Test(expected = IllegalArgumentException.class)
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.M)
     public void failWhenTryingToGrantPermissionNotInManifest() {
-        Context context = InstrumentationRegistry.getTargetContext();
+        Context context = ApplicationProvider.getApplicationContext();
         String permission = Manifest.permission.ADD_VOICEMAIL;
 
         TestButler.grantPermission(context, permission);
