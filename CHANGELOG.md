@@ -1,5 +1,10 @@
 # Change Log
 
+## Version 2.0.0 (2018-11-27)
+
+- Migrate to AndroidX libraries
+- Fix NoClassDefFoundError crash on API 15 [#81](https://github.com/linkedin/test-butler/issues/81)
+
 ## Version 1.4.0 (2018-07-30)
 
 - Add support for changing "Always finish activities" dev setting [#78](https://github.com/linkedin/test-butler/issues/78)

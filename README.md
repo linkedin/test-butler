@@ -55,20 +55,20 @@ Download the latest .apk and .aar via Maven:
     <dependency>
       <groupId>com.linkedin.testbutler</groupId>
       <artifactId>test-butler-library</artifactId>
-      <version>1.4.0</version>
+      <version>2.0.0</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>com.linkedin.testbutler</groupId>
       <artifactId>test-butler-app</artifactId>
-      <version>1.4.0</version>
+      <version>2.0.0</version>
       <type>pom</type>
     </dependency>
 ```
 
 or Gradle:
 ```
-    androidTestImplementation 'com.linkedin.testbutler:test-butler-library:1.4.0'
+    androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.0.0'
 ```
 
 You can also download the apk file manually from [Bintray](https://bintray.com/linkedin/maven/test-butler-app/) if you prefer.
