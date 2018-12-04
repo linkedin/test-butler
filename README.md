@@ -82,13 +82,13 @@ Install the Test Butler apk on your emulator prior to running tests, then add th
 public class ExampleTestRunner extends AndroidJUnitRunner {
   @Override
   public void onStart() {
-      TestButler.setup(ApplicationProvider.getApplicationContext());
+      TestButler.setup(getTargetContext());
       super.onStart();
   }
 
   @Override
   public void finish(int resultCode, Bundle results) {
-      TestButler.teardown(ApplicationProvider.getApplicationContext());
+      TestButler.teardown(getTargetContext());
       super.finish(resultCode, results);
   }
 }
