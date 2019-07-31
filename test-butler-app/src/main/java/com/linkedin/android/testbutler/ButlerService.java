@@ -19,9 +19,11 @@ import android.app.KeyguardManager;
 import android.app.Service;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.RemoteException;
+import android.view.WindowManager;
 import androidx.annotation.Nullable;
 import android.util.Log;
 
@@ -120,13 +122,20 @@ public class ButlerService extends Service {
         // Acquire a WifiLock to prevent wifi from turning off and breaking tests
         // NOTE: holding a WifiLock does NOT override a call to setWifiEnabled(false)
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-        wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "ButlerWifiLock");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "ButlerWifiLock");
+        } else {
+            wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "ButlerWifiLock");
+        }
         wifiLock.acquire();
 
         // Acquire a keyguard lock to prevent the lock screen from randomly appearing and breaking tests
-        KeyguardManager keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
-        keyguardLock = keyguardManager.newKeyguardLock("ButlerKeyguardLock");
-        keyguardLock.disableKeyguard();
+        // KeyguardManager has been restricted in Q, so we don't use to avoid breaking all test runs on Q emulators
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+            KeyguardManager keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
+            keyguardLock = keyguardManager.newKeyguardLock("ButlerKeyguardLock");
+            keyguardLock.disableKeyguard();
+        }
 
         // Acquire a wake lock to prevent the cpu from going to sleep and breaking tests
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
