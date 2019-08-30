@@ -1,1 +1,5 @@
-include ':test-butler-app', ':test-butler-library', ':test-butler-demo'
+include ':test-butler-api',
+        ':test-butler-app',
+        ':test-butler-app-core',
+        ':test-butler-demo',
+        ':test-butler-library'

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 LinkedIn Corp.
+ * Copyright (C) 2019 LinkedIn Corp.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,7 @@
  */
 package com.linkedin.android.testbutler;
 
-import android.content.ContentResolver;
 import android.provider.Settings;
-import androidx.annotation.NonNull;
 import android.util.Log;
 
 /**
@@ -30,14 +28,19 @@ public class SpellCheckerDisabler {
     // The constant in Settings.Secure is marked with @hide, so we can't use it
     private static final String SPELL_CHECKER_SETTING = "spell_checker_enabled";
 
+    private final SettingsAccessor settings;
     private boolean originalSpellCheckerMode;
+
+    public SpellCheckerDisabler(SettingsAccessor settings) {
+        this.settings = settings;
+    }
 
     /**
      * Should be called before starting tests, to save original spell checker state
      */
-    void saveSpellCheckerState(@NonNull ContentResolver contentResolver) {
+    void saveSpellCheckerState() {
         try {
-            originalSpellCheckerMode = Settings.Secure.getInt(contentResolver, SPELL_CHECKER_SETTING) == 1;
+            originalSpellCheckerMode = settings.secure().getInt(SPELL_CHECKER_SETTING) == 1;
         } catch (Settings.SettingNotFoundException e) {
             Log.e(TAG, "Error reading spell checker (" + SPELL_CHECKER_SETTING + ") setting!", e);
         }
@@ -46,18 +49,17 @@ public class SpellCheckerDisabler {
     /**
      * Should be called after testing completes, to restore original spell checker state
      */
-    void restoreSpellCheckerState(@NonNull ContentResolver contentResolver) {
-        setSpellChecker(contentResolver, originalSpellCheckerMode);
+    void restoreSpellCheckerState() {
+        setSpellChecker(originalSpellCheckerMode);
     }
 
     /**
      * Enable or disable the system spell checker
-     * @param resolver the {@link ContentResolver} used to modify settings
      * @param enabled The desired state of the Spell Checker service
      * @return true if the value was set, false otherwise
      */
-    public boolean setSpellChecker(@NonNull ContentResolver resolver, boolean enabled) {
+    public boolean setSpellChecker(boolean enabled) {
         int val = enabled ? 1 : 0;
-        return Settings.Secure.putInt(resolver, SPELL_CHECKER_SETTING, val);
+        return settings.secure().putInt(SPELL_CHECKER_SETTING, val);
     }
 }

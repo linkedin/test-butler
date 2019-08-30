@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 LinkedIn Corp.
+ * Copyright (C) 2019 LinkedIn Corp.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,11 @@ package com.linkedin.android.testbutler;
 
 import android.app.IActivityController;
 import android.content.Intent;
-import android.os.RemoteException;
-import androidx.annotation.Nullable;
-import android.util.Log;
 import android.os.Build;
+import android.os.RemoteException;
+import android.util.Log;
+
+import androidx.annotation.Nullable;
 
 import java.lang.reflect.Method;
 

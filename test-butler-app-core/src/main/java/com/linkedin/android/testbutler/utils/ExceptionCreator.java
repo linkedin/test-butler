@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 LinkedIn Corp.
+ * Copyright (C) 2019 LinkedIn Corp.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,15 @@ package com.linkedin.android.testbutler.utils;
 
 import android.os.Build;
 import android.os.RemoteException;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 public class ExceptionCreator {
+    private ExceptionCreator() {
+    }
+
     /**
      * Creates Remote exception with maximum possible verbosity for current SDK running on.
      * If it is not possible to add desired information to exception it will be logged at "error" level
