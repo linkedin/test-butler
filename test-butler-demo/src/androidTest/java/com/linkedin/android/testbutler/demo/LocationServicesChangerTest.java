@@ -17,9 +17,12 @@ package com.linkedin.android.testbutler.demo;
 
 import android.content.Context;
 import android.location.LocationManager;
+import android.os.Build;
 import android.provider.Settings;
 import androidx.test.core.app.ApplicationProvider;
 import com.linkedin.android.testbutler.TestButler;
+
+import org.junit.AssumptionViolatedException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -53,7 +56,11 @@ public class LocationServicesChangerTest {
     }
 
     @Test
-    public void neverEnableNetworkProvider() {
+    public void neverEnableNetworkProviderOnEmulator() {
+        if (!Build.FINGERPRINT.contains("generic")) {
+            // is not emulator
+            throw new AssumptionViolatedException("Device is not an emulator");
+        }
         // the network provider doesn't work on emulators, so nothing we do should be able to turn it on
         // http://stackoverflow.com/questions/2424564/activating-network-location-provider-in-the-android-emulator
         TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_OFF);
@@ -67,6 +74,26 @@ public class LocationServicesChangerTest {
 
         TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_HIGH_ACCURACY);
         assertFalse(manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER));
+    }
+
+    @Test
+    public void enableNetworkProviderOnPhysicalDevice() {
+        if (Build.FINGERPRINT.contains("generic")) {
+            // is an emulator
+            throw new AssumptionViolatedException("Device is an emulator");
+        }
+
+        TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_OFF);
+        assertFalse(manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER));
+
+        TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_SENSORS_ONLY);
+        assertFalse(manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER));
+
+        TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_BATTERY_SAVING);
+        assertTrue(manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER));
+
+        TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_HIGH_ACCURACY);
+        assertTrue(manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER));
     }
 
     @Test

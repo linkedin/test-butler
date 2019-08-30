@@ -43,7 +43,7 @@ import java.lang.reflect.Method;
  * Note: In order to implement the {@link IActivityController} interface, a copy of the .aidl file is included
  * in this project.
  */
-class NoDialogActivityController extends IActivityController.Stub {
+public class NoDialogActivityController extends IActivityController.Stub {
     private static final String TAG = NoDialogActivityController.class.getSimpleName();
 
     private static final int BUILD_VERSION_CODES_O = 26 ;
@@ -95,14 +95,14 @@ class NoDialogActivityController extends IActivityController.Stub {
     /**
      * Install an instance of this class as the {@link IActivityController} to monitor the ActivityManager
      */
-    static void install() {
+    public static void install() {
         setActivityController(new NoDialogActivityController());
     }
 
     /**
      * Remove any installed {@link IActivityController} to reset the ActivityManager to the default state
      */
-    static void uninstall() {
+    public static void uninstall() {
         setActivityController(null);
     }
 

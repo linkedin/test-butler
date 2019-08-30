@@ -24,7 +24,7 @@ import androidx.annotation.NonNull;
  * {@link #onCreate(SettingsAccessor)} and {@link #onDestroy()} <b>must</b> be called from the
  * corresponding methods in the TestButler service!
  */
-abstract class ButlerApiStubBase extends ButlerApi.Stub {
+public abstract class ButlerApiStubBase extends ButlerApi.Stub {
 
     private AnimationDisabler animationDisabler;
     private RotationChanger rotationChanger;
@@ -64,7 +64,7 @@ abstract class ButlerApiStubBase extends ButlerApi.Stub {
         return alwaysFinishActivitiesChanger.setAlwaysFinishActivitiesState(enabled);
     }
 
-    void onCreate(@NonNull SettingsAccessor settings) {
+    public void onCreate(@NonNull SettingsAccessor settings) {
         // Save current device rotation so we can restore it after tests complete
         rotationChanger = new RotationChanger(settings);
         rotationChanger.saveRotationState();
@@ -92,7 +92,7 @@ abstract class ButlerApiStubBase extends ButlerApi.Stub {
         alwaysFinishActivitiesChanger.saveAlwaysFinishActivitiesState();
     }
 
-    void onDestroy() {
+    public void onDestroy() {
         // Re-enable animations on the emulator
         animationDisabler.enableAnimations();
 
