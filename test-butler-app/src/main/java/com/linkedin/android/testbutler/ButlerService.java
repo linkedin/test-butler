@@ -69,7 +69,7 @@ public class ButlerService extends Service {
         gsmDataDisabler = new GsmDataDisabler();
         permissionGranter = new PermissionGranter();
         locks = new CommonDeviceLocks();
-        locks.acquire(getApplicationContext());
+        locks.acquire(this);
 
         butlerApi.onCreate(settings);
 
