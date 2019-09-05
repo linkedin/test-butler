@@ -18,6 +18,8 @@ package com.linkedin.android.testbutler;
 import android.provider.Settings;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 /**
  * A helper class for setting the ime keyboard
  *
@@ -37,7 +39,7 @@ public class ShowImeWithHardKeyboardHelper {
     private final SettingsAccessor settings;
     private boolean originalShowImeMode;
 
-    public ShowImeWithHardKeyboardHelper(SettingsAccessor settings) {
+    public ShowImeWithHardKeyboardHelper(@NonNull SettingsAccessor settings) {
         this.settings = settings;
     }
 

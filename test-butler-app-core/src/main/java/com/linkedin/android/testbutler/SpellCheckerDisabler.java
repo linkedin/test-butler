@@ -18,6 +18,8 @@ package com.linkedin.android.testbutler;
 import android.provider.Settings;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 /**
  * A helper class for disabling or enabling the system spell checker
  */
@@ -31,7 +33,7 @@ public class SpellCheckerDisabler {
     private final SettingsAccessor settings;
     private boolean originalSpellCheckerMode;
 
-    public SpellCheckerDisabler(SettingsAccessor settings) {
+    public SpellCheckerDisabler(@NonNull SettingsAccessor settings) {
         this.settings = settings;
     }
 

@@ -19,6 +19,8 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.Surface;
 
+import androidx.annotation.NonNull;
+
 /**
  * Helper class for modifying the orientation of the emulator
  * <p>
@@ -35,7 +37,7 @@ class RotationChanger {
     private int originalAccelerometer;
     private int originalUserRotation;
 
-    RotationChanger(SettingsAccessor settings) {
+    RotationChanger(@NonNull SettingsAccessor settings) {
         this.settings = settings;
     }
 

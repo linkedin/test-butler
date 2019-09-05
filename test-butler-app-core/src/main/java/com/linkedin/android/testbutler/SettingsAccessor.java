@@ -17,6 +17,9 @@ package com.linkedin.android.testbutler;
 
 import android.provider.Settings;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 
 /**
  * Implementations of this class allow access to, and modification of, {@link Settings}.
@@ -25,16 +28,19 @@ interface SettingsAccessor {
     /**
      * @return Accessor for {@link Settings.Global}
      */
+    @NonNull
     Namespace global();
 
     /**
      * @return Accessor for {@link Settings.System}
      */
+    @NonNull
     Namespace system();
 
     /**
      * @return Accessor for {@link Settings.Secure}
      */
+    @NonNull
     Namespace secure();
 
     /**
@@ -42,9 +48,10 @@ interface SettingsAccessor {
      * {@link Settings.System}, or {@link Settings.Secure}).
      */
     interface Namespace {
-        String getString(String key);
-        boolean putString(String key, String value);
-        int getInt(String key) throws Settings.SettingNotFoundException;
-        boolean putInt(String key, int value);
+        @Nullable
+        String getString(@NonNull String key);
+        boolean putString(@NonNull String key, @Nullable String value);
+        int getInt(@NonNull String key) throws Settings.SettingNotFoundException;
+        boolean putInt(@NonNull String key, int value);
     }
 }

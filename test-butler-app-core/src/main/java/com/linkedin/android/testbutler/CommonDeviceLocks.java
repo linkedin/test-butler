@@ -21,6 +21,8 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.PowerManager;
 
+import androidx.annotation.NonNull;
+
 import static android.content.Context.KEYGUARD_SERVICE;
 import static android.content.Context.POWER_SERVICE;
 import static android.content.Context.WIFI_SERVICE;
@@ -39,7 +41,7 @@ class CommonDeviceLocks {
      * Create locks for the given application context.
      * @param context The application context
      */
-    void acquire(Context context) {
+    void acquire(@NonNull Context context) {
         // Acquire a WifiLock to prevent wifi from turning off and breaking tests
         // NOTE: holding a WifiLock does NOT override a call to setWifiEnabled(false)
         WifiManager wifiManager = (WifiManager) context.getSystemService(WIFI_SERVICE);
@@ -71,8 +73,8 @@ class CommonDeviceLocks {
      */
     void release() {
         // Release all the locks we were holding
-        wakeLock.release();
-        keyguardLock.reenableKeyguard();
         wifiLock.release();
+        keyguardLock.reenableKeyguard();
+        wakeLock.release();
     }
 }

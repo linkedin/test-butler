@@ -20,6 +20,8 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import java.lang.reflect.Field;
 
 /**
@@ -36,7 +38,7 @@ class ImmersiveModeConfirmationDisabler {
     private String immersiveModeConfirmationKey;
     private boolean originalImmersiveModeConfirmationFlag;
 
-    ImmersiveModeConfirmationDisabler(SettingsAccessor settings) {
+    ImmersiveModeConfirmationDisabler(@NonNull SettingsAccessor settings) {
         this.settings = settings;
 
         immersiveModeConfirmationKey = null;

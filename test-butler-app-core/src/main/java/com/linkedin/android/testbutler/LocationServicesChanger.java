@@ -40,7 +40,7 @@ class LocationServicesChanger {
     private int originalLocationMode;
     private String originalLocationProviders;
 
-    LocationServicesChanger(SettingsAccessor settings) {
+    LocationServicesChanger(@NonNull SettingsAccessor settings) {
         this.settings = settings;
     }
 

@@ -17,6 +17,8 @@ package com.linkedin.android.testbutler;
 
 import android.os.RemoteException;
 
+import androidx.annotation.NonNull;
+
 /**
  * Base implementation for ButlerApi.Stub. Handles all basic Settings-based calls.
  * {@link #onCreate(SettingsAccessor)} and {@link #onDestroy()} <b>must</b> be called from the
@@ -62,7 +64,7 @@ abstract class ButlerApiStubBase extends ButlerApi.Stub {
         return alwaysFinishActivitiesChanger.setAlwaysFinishActivitiesState(enabled);
     }
 
-    void onCreate(SettingsAccessor settings) {
+    void onCreate(@NonNull SettingsAccessor settings) {
         // Save current device rotation so we can restore it after tests complete
         rotationChanger = new RotationChanger(settings);
         rotationChanger.saveRotationState();

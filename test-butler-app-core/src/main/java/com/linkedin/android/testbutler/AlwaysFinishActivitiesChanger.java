@@ -19,6 +19,8 @@ import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 /**
  * Helper class for modifying the always finish activities setting on the emulator
  */
@@ -31,7 +33,7 @@ class AlwaysFinishActivitiesChanger
 
     private boolean originalAlwaysFinishActivitiesMode;
 
-    AlwaysFinishActivitiesChanger(SettingsAccessor settings) {
+    AlwaysFinishActivitiesChanger(@NonNull SettingsAccessor settings) {
         this.settings = settings;
     }
 
