@@ -1,7 +1,7 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.artifactory'
-apply plugin: 'maven-publish'
 apply plugin: 'ivy-publish'
+apply plugin: 'maven-publish'
 
 version = VERSION_NAME
 
@@ -10,22 +10,15 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId "com.linkedin.android.testbutler"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName VERSION_NAME
-
-        signingConfig signingConfigs.debug
     }
-
-    signingConfigs {
-        debug {
-            storeFile file("keystore/platform.keystore")
-            keyAlias "platform"
-
-            storePassword "android"
-            keyPassword "android"
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
 
@@ -34,7 +27,7 @@ android {
         textOutput 'stdout'
         abortOnError true
         warningsAsErrors true
-        disable 'OldTargetApi', 'GradleDependency', 'PrivateApi', 'WakelockTimeout'
+        disable 'OldTargetApi', 'GradleDependency'
     }
 }
 
@@ -45,7 +38,7 @@ task sourcesJar(type: Jar) {
 
 task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
-    android.applicationVariants.matching { variant -> variant.name == 'debug'}.all { variant ->
+    android.libraryVariants.matching { variant -> variant.name == 'debug'}.all { variant ->
         classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
         classpath += variant.getCompileClasspath(null)
     }
@@ -58,14 +51,14 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 
 publishing {
     publications {
-        ivyApk(IvyPublication) {
-          from new org.gradle.api.internal.java.JavaLibrary(new org.gradle.api.internal.artifacts.publish.DefaultPublishArtifact(project.getName(), 'apk', 'apk', null, new Date(), new File("$buildDir/outputs/apk/release/${project.getName()}-release.apk"), assemble), project.configurations.compile.getAllDependencies())
+        ivyLib(IvyPublication) {
+          from new org.gradle.api.internal.java.JavaLibrary(new org.gradle.api.internal.artifacts.publish.DefaultPublishArtifact(project.getName(), 'aar', 'aar', null, new Date(), new File("$buildDir/outputs/aar/${project.getName()}-release.aar"), assemble), project.configurations.compile.getAllDependencies())
           artifact sourcesJar
           artifact javadocJar
         }
-        apk(MavenPublication) {
 
-            from new org.gradle.api.internal.java.JavaLibrary(new org.gradle.api.internal.artifacts.publish.DefaultPublishArtifact(project.getName(), 'apk', 'apk', null, new Date(), new File("$buildDir/outputs/apk/release/${project.getName()}-release.apk"), assemble), project.configurations.compile.getAllDependencies())
+        lib(MavenPublication) {
+          from new org.gradle.api.internal.java.JavaLibrary(new org.gradle.api.internal.artifacts.publish.DefaultPublishArtifact(project.getName(), 'aar', 'aar', null, new Date(), new File("$buildDir/outputs/aar/${project.getName()}-release.aar"), assemble), project.configurations.compile.getAllDependencies())
 
             artifact sourcesJar
             artifact javadocJar
@@ -73,7 +66,7 @@ publishing {
             pom.withXml {
                 asNode().children().last() + {
                     resolveStrategy = Closure.DELEGATE_FIRST
-                    description = "A companion apk for stabilizing Android emulators during testing"
+                    description = 'The Test Butler API for stabilizing Android devices during testing'
                     url 'https://github.com/linkedin/test-butler'
                     scm {
                         url 'https://github.com/linkedin/test-butler'
@@ -111,10 +104,4 @@ publishing {
 repositories {
     google()
     jcenter()
-}
-
-dependencies {
-    implementation project(':test-butler-api')
-    implementation project(':test-butler-app-core')
-    compileOnly "androidx.annotation:annotation:${rootProject.ext.supportLibrariesVersion}"
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 LinkedIn Corp.
+ * Copyright (C) 2019 LinkedIn Corp.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  */
 package com.linkedin.android.testbutler;
 
-import android.content.ContentResolver;
 import android.provider.Settings;
-import androidx.annotation.NonNull;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 /**
  * A helper class for setting the ime keyboard
@@ -36,14 +36,19 @@ public class ShowImeWithHardKeyboardHelper {
     // The constant in Settings.Secure is marked with @hide, so we can't use it
     private static final String SHOW_IME_SETTING = "show_ime_with_hard_keyboard";
 
+    private final SettingsAccessor settings;
     private boolean originalShowImeMode;
+
+    public ShowImeWithHardKeyboardHelper(@NonNull SettingsAccessor settings) {
+        this.settings = settings;
+    }
 
     /**
      * Should be called before starting tests, to save original ime state
      */
-    void saveShowImeState(@NonNull ContentResolver contentResolver) {
+    void saveShowImeState() {
         try {
-            originalShowImeMode = Settings.Secure.getInt(contentResolver, SHOW_IME_SETTING) == 1;
+            originalShowImeMode = settings.secure().getInt(SHOW_IME_SETTING) == 1;
         } catch (Settings.SettingNotFoundException e) {
             Log.e(TAG, "Error reading soft keyboard (" + SHOW_IME_SETTING + ") setting!", e);
         }
@@ -52,8 +57,8 @@ public class ShowImeWithHardKeyboardHelper {
     /**
      * Should be called after testing completes, to restore original ime state
      */
-    void restoreShowImeState(@NonNull ContentResolver contentResolver) {
-        setShowImeWithHardKeyboardState(contentResolver, originalShowImeMode);
+    void restoreShowImeState() {
+        setShowImeWithHardKeyboardState(originalShowImeMode);
     }
 
     /**
@@ -62,12 +67,11 @@ public class ShowImeWithHardKeyboardHelper {
      * This method has no effect on api levels below API 22
      *
      * You must have your emulator configured with a hardware IME, or this method has no effect
-     * @param resolver the {@link ContentResolver} used to modify settings
      * @param enabled Whether to require the hardware keyboard or not
      * @return true if the value was set, false otherwise
      */
-    public boolean setShowImeWithHardKeyboardState(@NonNull ContentResolver resolver, boolean enabled) {
+    public boolean setShowImeWithHardKeyboardState(boolean enabled) {
         int val = enabled ? 1 : 0;
-        return Settings.Secure.putInt(resolver, SHOW_IME_SETTING, val);
+        return settings.secure().putInt(SHOW_IME_SETTING, val);
     }
 }

@@ -66,7 +66,7 @@ publishing {
             pom.withXml {
                 asNode().children().last() + {
                     resolveStrategy = Closure.DELEGATE_FIRST
-                    description = 'A companion library for stabilizing Android emulators during testing'
+                    description = 'A companion library for stabilizing Android devices during testing'
                     url 'https://github.com/linkedin/test-butler'
                     scm {
                         url 'https://github.com/linkedin/test-butler'
@@ -107,6 +107,7 @@ repositories {
 }
 
 dependencies {
+    implementation project(":test-butler-api")
     compileOnly "androidx.annotation:annotation:${rootProject.ext.supportLibrariesVersion}"
     implementation 'junit:junit:4.12'
 }

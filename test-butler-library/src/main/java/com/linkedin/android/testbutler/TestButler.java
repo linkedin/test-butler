@@ -108,7 +108,6 @@ public class TestButler {
         intent.setComponent(new ComponentName("com.linkedin.android.testbutler",
                 "com.linkedin.android.testbutler.ButlerService"));
 
-        context.startService(intent);
         context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
         try {
             if (!serviceStarted.await(5, TimeUnit.SECONDS)) {
@@ -137,7 +136,6 @@ public class TestButler {
                 "com.linkedin.android.testbutler.ButlerService"));
 
         context.unbindService(serviceConnection);
-        context.stopService(intent);
         serviceStarted = new CountDownLatch(1);
     }
 

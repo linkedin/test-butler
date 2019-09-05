@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 LinkedIn Corp.
+ * Copyright (C) 2019 LinkedIn Corp.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,12 @@ package com.linkedin.android.testbutler;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.content.ContentResolver;
 import android.location.LocationManager;
 import android.os.Build;
 import android.provider.Settings;
-import androidx.annotation.NonNull;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 /**
  * Helper class for modifying the location services mode on the emulator
@@ -35,20 +35,25 @@ class LocationServicesChanger {
 
     private static final String TAG = LocationServicesChanger.class.getSimpleName();
 
+    private final SettingsAccessor settings;
+
     private int originalLocationMode;
     private String originalLocationProviders;
+
+    LocationServicesChanger(@NonNull SettingsAccessor settings) {
+        this.settings = settings;
+    }
 
     /**
      * Should be called before starting tests, to save original location services values
      */
     @SuppressWarnings("deprecation")
-    void saveLocationServicesState(@NonNull ContentResolver contentResolver) {
+    void saveLocationServicesState() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            originalLocationProviders = Settings.Secure.getString(contentResolver,
-                    Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            originalLocationProviders = settings.secure().getString(Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
         } else {
             try {
-                originalLocationMode = Settings.Secure.getInt(contentResolver, Settings.Secure.LOCATION_MODE);
+                originalLocationMode = settings.secure().getInt(Settings.Secure.LOCATION_MODE);
             } catch (Settings.SettingNotFoundException e) {
                 Log.e(TAG, "Error reading location mode settings!", e);
             }
@@ -58,36 +63,35 @@ class LocationServicesChanger {
     /**
      * Should be called after testing completes, to restore original location services values
      */
-    void restoreLocationServicesState(@NonNull ContentResolver contentResolver) {
+    void restoreLocationServicesState() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            setLocationServicesStatePreKitKat(contentResolver, originalLocationProviders);
+            setLocationProviders(originalLocationProviders);
         } else {
-            setLocationServicesState(contentResolver, originalLocationMode);
+            setLocationMode(originalLocationMode);
         }
     }
 
     /**
      * Set a custom location mode
      *
-     * @param contentResolver the {@link ContentResolver} used to modify settings
      * @param locationMode    the desired location mode value to be set
      * @return true if the new value was set, false on database errors
      */
-    boolean setLocationServicesState(@NonNull ContentResolver contentResolver, int locationMode) {
+    boolean setLocationServicesState(int locationMode) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             switch (locationMode) {
                 case Settings.Secure.LOCATION_MODE_OFF:
-                    return setLocationServicesStatePreKitKat(contentResolver, "");
+                    return setLocationProviders("");
                 case Settings.Secure.LOCATION_MODE_BATTERY_SAVING:
-                    return setLocationServicesStatePreKitKat(contentResolver, LocationManager.PASSIVE_PROVIDER);
+                    return setLocationProviders(LocationManager.PASSIVE_PROVIDER);
                 case Settings.Secure.LOCATION_MODE_SENSORS_ONLY:
-                    return setLocationServicesStatePreKitKat(
-                            contentResolver, String.format("%s,%s",
+                    return setLocationProviders(
+                            String.format("%s,%s",
                                     LocationManager.PASSIVE_PROVIDER,
                                     LocationManager.GPS_PROVIDER));
                 case Settings.Secure.LOCATION_MODE_HIGH_ACCURACY:
-                    return setLocationServicesStatePreKitKat(
-                            contentResolver, String.format("%s,%s,%s",
+                    return setLocationProviders(
+                            String.format("%s,%s,%s",
                                     LocationManager.PASSIVE_PROVIDER,
                                     LocationManager.NETWORK_PROVIDER,
                                     LocationManager.GPS_PROVIDER));
@@ -95,18 +99,17 @@ class LocationServicesChanger {
                     throw new IllegalArgumentException("Unknown location mode: " + locationMode);
             }
         } else {
-            return setLocationServicesStateKitKat(contentResolver, locationMode);
+            return setLocationMode(locationMode);
         }
     }
 
     @SuppressWarnings("deprecation")
-    private boolean setLocationServicesStatePreKitKat(@NonNull ContentResolver contentResolver,
-                                                      @NonNull String providers) {
-        return Settings.Secure.putString(contentResolver, Settings.Secure.LOCATION_PROVIDERS_ALLOWED, providers);
+    protected boolean setLocationProviders(@NonNull String providers) {
+        return settings.secure().putString(Settings.Secure.LOCATION_PROVIDERS_ALLOWED, providers);
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    private boolean setLocationServicesStateKitKat(@NonNull ContentResolver contentResolver, int locationMode) {
-        return Settings.Secure.putInt(contentResolver, Settings.Secure.LOCATION_MODE, locationMode);
+    protected boolean setLocationMode(int locationMode) {
+        return settings.secure().putInt(Settings.Secure.LOCATION_MODE, locationMode);
     }
 }

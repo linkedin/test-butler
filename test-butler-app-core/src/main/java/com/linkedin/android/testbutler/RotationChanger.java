@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 LinkedIn Corp.
+ * Copyright (C) 2019 LinkedIn Corp.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,11 @@
  */
 package com.linkedin.android.testbutler;
 
-import android.content.ContentResolver;
 import android.provider.Settings;
-import androidx.annotation.NonNull;
 import android.util.Log;
 import android.view.Surface;
+
+import androidx.annotation.NonNull;
 
 /**
  * Helper class for modifying the orientation of the emulator
@@ -33,46 +33,50 @@ class RotationChanger {
 
     private static final String TAG = RotationChanger.class.getSimpleName();
 
+    private final SettingsAccessor settings;
     private int originalAccelerometer;
     private int originalUserRotation;
+
+    RotationChanger(@NonNull SettingsAccessor settings) {
+        this.settings = settings;
+    }
 
     /**
      * Should be called before starting tests, to save original rotation values
      */
-    void saveRotationState(@NonNull ContentResolver contentResolver) {
+    void saveRotationState() {
         // Disable rotation from the accelerometer; 0 means off, 1 means on
         try {
-            originalAccelerometer = Settings.System.getInt(contentResolver, Settings.System.ACCELEROMETER_ROTATION);
+            originalAccelerometer = settings.system().getInt(Settings.System.ACCELEROMETER_ROTATION);
         } catch (Settings.SettingNotFoundException e) {
             Log.d(TAG, "Could not read accelerometer rotation setting: " + e.getMessage());
         }
         try {
-            originalUserRotation = Settings.System.getInt(contentResolver, Settings.System.USER_ROTATION);
+            originalUserRotation = settings.system().getInt(Settings.System.USER_ROTATION);
         } catch (Settings.SettingNotFoundException e) {
             Log.d(TAG, "Could not read user rotation setting: " + e.getMessage());
         }
 
         // Make sure we start the test in portrait and disable the accelerometer
-        Settings.System.putInt(contentResolver, Settings.System.USER_ROTATION, Surface.ROTATION_0);
-        Settings.System.putInt(contentResolver, Settings.System.ACCELEROMETER_ROTATION, 0);
+        settings.system().putInt(Settings.System.USER_ROTATION, Surface.ROTATION_0);
+        settings.system().putInt(Settings.System.ACCELEROMETER_ROTATION, 0);
     }
 
     /**
      * Should be called after testing completes, to restore original rotation values
      */
-    void restoreRotationState(@NonNull ContentResolver contentResolver) {
-        Settings.System.putInt(contentResolver, Settings.System.ACCELEROMETER_ROTATION, originalAccelerometer);
-        Settings.System.putInt(contentResolver, Settings.System.USER_ROTATION, originalUserRotation);
+    void restoreRotationState() {
+        settings.system().putInt(Settings.System.ACCELEROMETER_ROTATION, originalAccelerometer);
+        settings.system().putInt(Settings.System.USER_ROTATION, originalUserRotation);
     }
 
     /**
      * Set a custom device rotation
      *
-     * @param contentResolver the {@link ContentResolver} used to modify settings
      * @param rotation        the desired rotation value to be set
      * @return true if the new value was set, false on database errors
      */
-    boolean setRotation(@NonNull ContentResolver contentResolver, int rotation) {
+    boolean setRotation(int rotation) {
         if (rotation != Surface.ROTATION_0
                 && rotation != Surface.ROTATION_90
                 && rotation != Surface.ROTATION_180
@@ -83,6 +87,6 @@ class RotationChanger {
         Log.d(TAG, "Setting screen orientation to " + rotation);
 
         // Use any of the Surface.ROTATION_ constants
-        return Settings.System.putInt(contentResolver, Settings.System.USER_ROTATION, rotation);
+        return settings.system().putInt(Settings.System.USER_ROTATION, rotation);
     }
 }

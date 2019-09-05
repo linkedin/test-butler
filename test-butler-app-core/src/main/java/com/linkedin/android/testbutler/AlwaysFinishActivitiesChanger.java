@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 LinkedIn Corp.
+ * Copyright (C) 2019 LinkedIn Corp.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,11 @@
  */
 package com.linkedin.android.testbutler;
 
-import android.annotation.SuppressLint;
-import android.content.ContentResolver;
 import android.os.Build;
 import android.provider.Settings;
-import androidx.annotation.NonNull;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 /**
  * Helper class for modifying the always finish activities setting on the emulator
@@ -30,43 +29,48 @@ class AlwaysFinishActivitiesChanger
 
     private static final String TAG = AlwaysFinishActivitiesChanger.class.getSimpleName();
 
+    private final SettingsAccessor settings;
+
     private boolean originalAlwaysFinishActivitiesMode;
+
+    AlwaysFinishActivitiesChanger(@NonNull SettingsAccessor settings) {
+        this.settings = settings;
+    }
 
     /**
      * Should be called before starting tests, to save original always finish activities setting
      */
-    void saveAlwaysFinishActivitiesState(@NonNull ContentResolver contentResolver) {
-        originalAlwaysFinishActivitiesMode = getAlwaysFinishActivitiesState(contentResolver);
+    void saveAlwaysFinishActivitiesState() {
+        originalAlwaysFinishActivitiesMode = getAlwaysFinishActivitiesState();
     }
 
     /**
      * Should be called after testing completes, to restore original always finish activities setting
      */
-    void restoreAlwaysFinishActivitiesState(@NonNull ContentResolver contentResolver) {
-        setAlwaysFinishActivitiesState(contentResolver, originalAlwaysFinishActivitiesMode);
+    void restoreAlwaysFinishActivitiesState() {
+        setAlwaysFinishActivitiesState(originalAlwaysFinishActivitiesMode);
     }
 
     /**
      * Set the always finish activities setting
      *
-     * @param contentResolver the {@link ContentResolver} used to modify settings
      * @param value           the desired always finish activities mode value to be set
      * @return true if the new value was set, false on database errors
      */
-    boolean setAlwaysFinishActivitiesState(@NonNull ContentResolver contentResolver, boolean value) {
+    boolean setAlwaysFinishActivitiesState(boolean value) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            return Settings.System.putInt(contentResolver, Settings.System.ALWAYS_FINISH_ACTIVITIES, value ? 1 : 0);
+            return settings.system().putInt(Settings.System.ALWAYS_FINISH_ACTIVITIES, value ? 1 : 0);
         } else {
-            return Settings.Global.putInt(contentResolver, Settings.Global.ALWAYS_FINISH_ACTIVITIES, value ? 1 : 0);
+            return settings.global().putInt(Settings.Global.ALWAYS_FINISH_ACTIVITIES, value ? 1 : 0);
         }
     }
 
-    private boolean getAlwaysFinishActivitiesState(@NonNull ContentResolver contentResolver) {
+    private boolean getAlwaysFinishActivitiesState() {
         try {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                return Settings.System.getInt(contentResolver, Settings.System.ALWAYS_FINISH_ACTIVITIES) != 0;
+                return settings.system().getInt(Settings.System.ALWAYS_FINISH_ACTIVITIES) != 0;
             } else {
-                return Settings.Global.getInt(contentResolver, Settings.Global.ALWAYS_FINISH_ACTIVITIES) != 0;
+                return settings.global().getInt(Settings.Global.ALWAYS_FINISH_ACTIVITIES) != 0;
             }
         } catch (Settings.SettingNotFoundException e) {
             Log.e(TAG, "Error reading always finish activities settings!", e);
