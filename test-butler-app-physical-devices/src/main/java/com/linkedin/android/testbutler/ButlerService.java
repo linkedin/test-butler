@@ -15,9 +15,11 @@
  */
 package com.linkedin.android.testbutler;
 
+import android.app.KeyguardManager;
 import android.app.Service;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
@@ -61,6 +63,7 @@ public class ButlerService extends Service {
     private ShellButlerServiceBinder shellBinder;
     private ButlerApi butlerApi;
     private CommonDeviceLocks locks;
+    private KeyguardManager.KeyguardLock keyguardLock;
 
     @Override
     public void onCreate() {
@@ -74,6 +77,13 @@ public class ButlerService extends Service {
 
             locks = new CommonDeviceLocks();
             locks.acquire(this);
+
+            // CommonDeviceLocks doesn't enable the Keyguard Lock on Q due to compatibility issues.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                KeyguardManager keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
+                keyguardLock = keyguardManager.newKeyguardLock("ButlerKeyguardLock");
+                keyguardLock.disableKeyguard();
+            }
 
             Log.d(TAG, "ButlerService startup completed...");
         } catch (InterruptedException e) {
@@ -89,19 +99,26 @@ public class ButlerService extends Service {
 
         shellBinder.unbind();
         locks.release();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            keyguardLock.reenableKeyguard();
+        }
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        // we could almost just return butlerApi directly, except for setWifiState :(
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            return butlerApi.asBinder();
+        }
+
+        // Before 8.1, shell user doesn't have CHANGE_WIFI_STATE privileges, so we have to do it
+        // here instead of in ShellButlerService.
+        // Note that after Android 10, you cannot call setWifiEnabled from an app, so it *must* be
+        // done in ShellButlerService (covered by check above).
         return new ButlerApi.Stub() {
             @Override
             public boolean setWifiState(boolean enabled) throws RemoteException {
-                // two steps -- ShellButlerService sets the wifi_on setting (necessary on some
-                // physical devices), while this uses WifiManager. For some reason, shell user
-                // doesn't have setWifiEnabled privileges.
-                butlerApi.setWifiState(enabled);
                 WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
                 return wifiManager.setWifiEnabled(enabled);
             }

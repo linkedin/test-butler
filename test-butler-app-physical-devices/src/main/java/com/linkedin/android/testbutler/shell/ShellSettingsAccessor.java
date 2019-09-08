@@ -42,9 +42,7 @@ class ShellSettingsAccessor implements SettingsAccessor, Closeable {
 
     private static final String TAG = ShellSettingsAccessor.class.getSimpleName();
 
-    public static final String NS_SECURE = "secure";
-    public static final String NS_SYSTEM = "system";
-    public static final String NS_GLOBAL = "global";
+    private static final String AUTHORITY = "settings";
 
     private final Object provider;
     private final Method call;
@@ -86,18 +84,32 @@ class ShellSettingsAccessor implements SettingsAccessor, Closeable {
             Method getDefault = activityManagerClass.getMethod("getDefault");
             getDefault.setAccessible(true);  // not sure if this is necessary
 
-            Method getContentProviderExternal = iActivityManagerClass.getMethod("getContentProviderExternal", String.class, int.class, IBinder.class);
+            Method getContentProviderExternal;
+            Binder token = new Binder();
+            Object[] getContentProviderExternalArgs;
+            Method callMethod;
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                getContentProviderExternal = iActivityManagerClass.getMethod("getContentProviderExternal", String.class, int.class, IBinder.class);
+                getContentProviderExternalArgs = new Object[] {AUTHORITY, 0, token};
+                callMethod = iContentProviderClass.getMethod("call", String.class, String.class, String.class, Bundle.class);
+            } else {
+                getContentProviderExternal = iActivityManagerClass.getMethod("getContentProviderExternal", String.class, int.class, IBinder.class, String.class);
+                getContentProviderExternalArgs = new Object[] {AUTHORITY, 0, token, null};
+                callMethod = iContentProviderClass.getMethod("call", String.class, String.class, String.class, String.class, Bundle.class);
+            }
+
             Method removeContentProviderExternal = iActivityManagerClass.getMethod("removeContentProviderExternal", String.class, IBinder.class);
-            Method callMethod = iContentProviderClass.getMethod("call", String.class, String.class, String.class, Bundle.class);
             Method getPairValue = Bundle.class.getMethod("getPairValue");
 
             Object activityManager = getDefault.invoke(null);
-            Binder token = new Binder();
-            Object providerHolder = getContentProviderExternal.invoke(activityManager, "settings", 0, token);
+            Object providerHolder = getContentProviderExternal.invoke(activityManager, getContentProviderExternalArgs);
+
             try {
                 Field providerField = providerHolder.getClass().getField("provider");
                 providerField.setAccessible(true);
                 Object provider = providerField.get(providerHolder);
+
                 return new ShellSettingsAccessor(provider, callMethod, getPairValue,
                         removeContentProviderExternal, activityManager, token, uiAutomation);
             } catch (Exception e) {
@@ -153,7 +165,11 @@ class ShellSettingsAccessor implements SettingsAccessor, Closeable {
             arg.putInt("_user", 0);
 
             try {
-                call.invoke(provider, SHELL_PACKAGE, putMethod, key, arg);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                    call.invoke(provider, SHELL_PACKAGE, putMethod, key, arg);
+                } else {
+                    call.invoke(provider, SHELL_PACKAGE, AUTHORITY, putMethod, key, arg);
+                }
                 return true;
             } catch (Exception e) {
                 Log.w(TAG, String.format("Failed to put setting: %s.%s = %s", name, key, value), e);
@@ -168,7 +184,12 @@ class ShellSettingsAccessor implements SettingsAccessor, Closeable {
             arg.putInt("_user", 0);
 
             try {
-                Bundle b = (Bundle) call.invoke(provider, SHELL_PACKAGE, getMethod, key, arg);
+                Bundle b;
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                    b = (Bundle) call.invoke(provider, SHELL_PACKAGE, getMethod, key, arg);
+                } else {
+                    b = (Bundle) call.invoke(provider, SHELL_PACKAGE, AUTHORITY, getMethod, key, arg);
+                }
                 if (b == null) {
                     return null;
                 }
@@ -196,20 +217,20 @@ class ShellSettingsAccessor implements SettingsAccessor, Closeable {
 
     class Global extends Namespace {
         private Global() {
-            super(NS_GLOBAL, "GET_global", "PUT_global");
+            super("global", "GET_global", "PUT_global");
         }
     }
 
     class System extends Namespace {
         private System() {
-            super(NS_SYSTEM, "GET_system", "PUT_system");
+            super("system", "GET_system", "PUT_system");
         }
     }
 
     class Secure extends Namespace {
 
         private Secure() {
-            super(NS_SECURE, "GET_secure", "PUT_secure");
+            super("secure", "GET_secure", "PUT_secure");
         }
 
         @Override
@@ -217,6 +238,7 @@ class ShellSettingsAccessor implements SettingsAccessor, Closeable {
             /* Android's Settings class does this mapping from location mode to providers.
              * This class bypasses the Settings class, we have to do that here too. */
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+                    && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
                     && Settings.Secure.LOCATION_MODE.equals(key)) {
                 return locationModeSetting.getLocationMode();
             }
@@ -226,6 +248,7 @@ class ShellSettingsAccessor implements SettingsAccessor, Closeable {
         @Override
         public boolean putInt(@NonNull String key, int value) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+                    && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
                     && Settings.Secure.LOCATION_MODE.equals(key)) {
                 return locationModeSetting.setLocationMode(value);
             }

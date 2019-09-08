@@ -20,7 +20,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.RemoteException;
-import android.provider.Settings;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -53,12 +52,13 @@ public class ShellButlerService implements Closeable {
     static final String SHELL_PACKAGE = "com.android.shell";
 
     private static final int CURRENT_USER_ID = -2;
-    private static CountDownLatch stop = new CountDownLatch(1);
 
+    private final CountDownLatch stop = new CountDownLatch(1);
     private final ShellSettingsAccessor settings;
 
     private GsmDataDisabler gsmDataDisabler;
     private PermissionGranter permissionGranter;
+    private WifiManagerWrapper wifiManager;
 
     private final ButlerApiStubBase butlerApi = new ButlerApiStubBase() {
         @Override
@@ -72,24 +72,20 @@ public class ShellButlerService implements Closeable {
 
         @Override
         public boolean setWifiState(boolean enabled) throws RemoteException {
-            Log.d(TAG, "Got setWifiState");
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                return settings.secure().putInt(Settings.Secure.WIFI_ON, enabled ? 1 : 0);
-            } else {
-                return settings.global().putInt(Settings.Global.WIFI_ON, enabled ? 1 : 0);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1) {
+                Log.e(TAG, "setWifiState should not be called on ShellButlerService before 8.1");
+                return false;
             }
+            return wifiManager.setWifiEnabled(enabled);
         }
 
         @Override
         public boolean setGsmState(boolean enabled) throws RemoteException {
-            Log.d(TAG, "Got setGsmState");
             return gsmDataDisabler.setGsmState(enabled);
         }
 
         @Override
         public boolean grantPermission(String packageName, String permission) throws RemoteException {
-            Log.d(TAG, "Got grantPermission");
             return permissionGranter.grantPermission(packageName, permission);
         }
     };
@@ -105,6 +101,10 @@ public class ShellButlerService implements Closeable {
 
         gsmDataDisabler = new GsmDataDisabler(serviceManager);
         permissionGranter = new PermissionGranter(serviceManager);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            wifiManager = WifiManagerWrapper.getInstance(serviceManager);
+        }
 
         butlerApi.onCreate(settings);
 
@@ -146,7 +146,7 @@ public class ShellButlerService implements Closeable {
             shellButlerService.onCreate();
             shellButlerService.broadcastButlerApi();
             Log.d(TAG, "ButlerApi sent, waiting for stop");
-            stop.await();
+            shellButlerService.stop.await();
         } catch (Exception e) {
             Log.e(TAG, "Exception in ShellButlerService, exiting...", e);
         }

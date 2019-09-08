@@ -74,7 +74,9 @@ class CommonDeviceLocks {
     void release() {
         // Release all the locks we were holding
         wifiLock.release();
-        keyguardLock.reenableKeyguard();
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+            keyguardLock.reenableKeyguard();
+        }
         wakeLock.release();
     }
 }
