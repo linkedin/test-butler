@@ -17,7 +17,6 @@ package com.linkedin.android.testbutler;
 
 import android.os.AsyncTask;
 import android.os.Build;
-import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -127,10 +126,9 @@ class AdbDevice {
      * @return A list of AdbDevice instances. Each AdbDevice has an explicit DeviceId.
      */
     private static List<AdbDevice> getDevices(String host, int port) throws InterruptedException, ExecutionException {
-        String result = executeAdbCommands(host, port, "host:devices").get();
+        String result = send(host, port, AdbCommand.getDevices()).get();
         ArrayList<AdbDevice> devices = new ArrayList<>();
-        // first 4 characters are the length of the response.
-        for (String line : result.substring(4).trim().split("\n")) {
+        for (String line : result.trim().split("\n")) {
             String[] parts = line.split("\t");
             if (parts.length > 1) {
                 devices.add(new AdbDevice(host, port, parts[0].trim()));
@@ -139,9 +137,10 @@ class AdbDevice {
         return devices;
     }
 
-    private static AdbCommandTask executeAdbCommands(String host, int port, String... commands) {
-        AdbCommandTask task = new AdbCommandTask(host, port);
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, commands);
+    @NonNull
+    private static AdbCommandTask send(@NonNull String host, int port, AdbCommand command) {
+        AdbCommandTask task = new AdbCommandTask(host, port, command);
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         return task;
     }
 
@@ -154,52 +153,29 @@ class AdbDevice {
      */
     @NonNull
     AdbCommandTask shellCommand(@NonNull String command, @NonNull String... args) {
-        return executeAdbCommands(host, port, getDeviceCommand(), buildShellCommand(command, args));
+        return send(host, port, AdbCommand.shell(deviceId, command, args));
     }
 
-    private String getDeviceCommand() {
-        return deviceId == null ? "host:transport-any" : ("host:transport:" + deviceId);
-    }
-
-    private static String buildShellCommand(String command, String... args) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("shell:");
-        sb.append(command);
-        for (String arg : args) {
-            sb.append(' ');
-            // escape arg if necessary
-            if (arg.matches("\\S+")) {
-                sb.append(arg);
-            } else {
-                sb.append("'");
-                sb.append(arg.replace("\'", "'\"'\"'"));
-                sb.append("'");
-            }
-        }
-        return sb.toString();
-    }
-
-    static class AdbCommandTask extends AsyncTask<String, Void, String> {
+    static class AdbCommandTask extends AsyncTask<Void, Void, String> {
         private final String host;
         private final int port;
+        private final AdbCommand command;
         private final Socket socket = new Socket();
 
-        private AdbCommandTask(@NonNull String host, int port) {
+        AdbCommandTask(@NonNull String host, int port, AdbCommand command) {
             this.host = host;
             this.port = port;
+            this.command = command;
         }
 
         @Override
-        protected String doInBackground(String... commands) {
-            Log.d(TAG, "Executing commands: " + TextUtils.join(";", commands));
+        protected String doInBackground(Void... ignored) {
+            Log.d(TAG, "Executing command: " + command);
             try (Socket socket = this.socket) {
                 socket.connect(new InetSocketAddress(host, port));
                 AdbConnection connection = new AdbConnection(socket);
-                for (String command : commands) {
-                    connection.sendCommand(command);
-                }
-                String response = connection.getResponse();
-                Log.d(TAG, "Command: " + TextUtils.join(";", commands) + " returned " + response);
+                String response = command.execute(connection);
+                Log.d(TAG, "Command '" + command + "' returned " + response);
                 return response;
             } catch (IOException e) {
                 throw new RuntimeException(e);

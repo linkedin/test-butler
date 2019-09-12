@@ -27,12 +27,23 @@ import java.util.Scanner;
 
 /**
  * A connection to an ADB server via Socket. Contains the ADB protocol implementation responsible
- * for sending ADB commands and reading responses.
+ * for sending and receiving ADB messages.
+ *
+ * See <a href="https://android.googlesource.com/platform/system/core/+/master/adb/OVERVIEW.TXT">
+ * https://android.googlesource.com/platform/system/core/+/master/adb/OVERVIEW.TXT</a> for details
+ * on the ADB protocol. In summary:
+ *
+ * Messages are passed using length-prefix framing of 4 hex digits. An ADB command message is sent
+ * by the client, and a "FAIL" or "OKAY" message is returned. IF "FAIL", the next message returned
+ * is the error message. If "OKAY", the command succeeded. Depending on the command, you may be able
+ * to read a response or send more commands, or the connection may be closed. See
+ * {@link AdbCommand} for implementations of these commands.
  */
 class AdbConnection {
-
     // since strings are prefixed with 4 hex chars, max message length is 16^4
     private static final int BUF_SIZE = 65536;
+    private static final int PREFIX_LENGTH = 4;
+    private static final String PREFIX_FORMAT = "%04x";
 
     private final DataInputStream input;
     private final DataOutputStream output;
@@ -46,31 +57,6 @@ class AdbConnection {
         this.output = new DataOutputStream(socket.getOutputStream());
     }
 
-    private void writeMsg(String message) throws IOException {
-        String lengthHex = String.format("%04x", message.length());
-        output.writeBytes(lengthHex);
-        output.writeBytes(message);
-    }
-
-    private String readExactly(int length) throws IOException {
-        input.readFully(buf, 0, length);
-        return new String(buf, 0, length, "ascii");
-    }
-
-    private String readMsg() throws IOException {
-        String lengthHex = readExactly(4);
-        int length = Integer.parseInt(lengthHex, 16);
-        return readExactly(length);
-    }
-
-    private void checkResponse() throws IOException {
-        String response = readExactly(4);
-        if (!"OKAY".equals(response)) {
-            String error = readMsg();
-            throw new IOException("command failed: " + error);
-        }
-    }
-
     void sendCommand(@NonNull String command) throws IOException {
         writeMsg(command);
         output.flush();
@@ -78,8 +64,35 @@ class AdbConnection {
     }
 
     @NonNull
-    String getResponse() {
+    String readMsg() throws IOException {
+        String lengthHex = readExactly(PREFIX_LENGTH);
+        int length = Integer.parseInt(lengthHex, 16);
+        return readExactly(length);
+    }
+
+    @NonNull
+    String readAll() {
         Scanner scanner = new Scanner(new BufferedInputStream(input)).useDelimiter("\\A");
         return scanner.hasNext() ? scanner.next() : "";
+    }
+
+    private void writeMsg(String message) throws IOException {
+        String lengthHex = String.format(PREFIX_FORMAT, message.length());
+        output.writeBytes(lengthHex);
+        output.writeBytes(message);
+    }
+
+    private void checkResponse() throws IOException {
+        String response = readExactly(4);
+        // either "OKAY" or "FAIL"
+        if (!"OKAY".equals(response)) {
+            String error = readMsg();
+            throw new IOException("command failed: " + error);
+        }
+    }
+
+    private String readExactly(int length) throws IOException {
+        input.readFully(buf, 0, length);
+        return new String(buf, 0, length, "ascii");
     }
 }
