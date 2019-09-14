@@ -59,7 +59,7 @@ class ShellSettingsAccessor implements SettingsAccessor, Closeable {
 
     private ShellSettingsAccessor(Object provider, Method call, Method getPairValue,
                                   Method removeContentProviderExternal, Object activityManager,
-                                  Binder token, UiAutomationConnectionWrapper uiAutomation) {
+                                  Binder token) {
         this.provider = provider;
         this.call = call;
         this.getPairValue = getPairValue;
@@ -71,11 +71,11 @@ class ShellSettingsAccessor implements SettingsAccessor, Closeable {
         this.system = new System();
         this.secure = new Secure();
 
-        this.locationModeSetting = new ShellLocationModeSetting(this, uiAutomation);
+        this.locationModeSetting = new ShellLocationModeSetting(this);
     }
 
     @NonNull
-    static ShellSettingsAccessor newInstance(@Nullable UiAutomationConnectionWrapper uiAutomation) throws Exception {
+    static ShellSettingsAccessor newInstance() throws Exception {
         try {
             Class<?> activityManagerClass = Class.forName("android.app.ActivityManagerNative");
             Class<?> iActivityManagerClass = Class.forName("android.app.IActivityManager");
@@ -111,7 +111,7 @@ class ShellSettingsAccessor implements SettingsAccessor, Closeable {
                 Object provider = providerField.get(providerHolder);
 
                 return new ShellSettingsAccessor(provider, callMethod, getPairValue,
-                        removeContentProviderExternal, activityManager, token, uiAutomation);
+                        removeContentProviderExternal, activityManager, token);
             } catch (Exception e) {
                 removeContentProviderExternal.invoke(activityManager, "settings", token);
                 throw e;

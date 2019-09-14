@@ -23,7 +23,6 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.BundleCompat;
 
 import com.linkedin.android.testbutler.ButlerApi;
@@ -140,8 +139,7 @@ public class ShellButlerService implements Closeable {
     }
 
     public static void main(String[] args) {
-        try (UiAutomationConnectionWrapper uiAutomation = maybeUiAutomationWrapper();
-             ShellSettingsAccessor settings = ShellSettingsAccessor.newInstance(uiAutomation);
+        try (ShellSettingsAccessor settings = ShellSettingsAccessor.newInstance();
              ShellButlerService shellButlerService = new ShellButlerService(settings)) {
             shellButlerService.onCreate();
             shellButlerService.broadcastButlerApi();
@@ -150,13 +148,5 @@ public class ShellButlerService implements Closeable {
         } catch (Exception e) {
             Log.e(TAG, "Exception in ShellButlerService, exiting...", e);
         }
-    }
-
-    @Nullable
-    private static UiAutomationConnectionWrapper maybeUiAutomationWrapper() throws Exception {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            return null;
-        }
-        return UiAutomationConnectionWrapper.newInstance();
     }
 }

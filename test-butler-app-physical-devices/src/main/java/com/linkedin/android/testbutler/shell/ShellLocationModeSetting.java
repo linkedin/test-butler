@@ -45,12 +45,9 @@ class ShellLocationModeSetting {
     private static final int NETWORK_CONTENT_SLEEP_BETWEEN_ATTEMPTS_MS = 500;
 
     private final ShellSettingsAccessor settings;
-    private final UiAutomationConnectionWrapper uiAutomation;
 
-    ShellLocationModeSetting(@NonNull ShellSettingsAccessor settings,
-                             @Nullable UiAutomationConnectionWrapper uiAutomation) {
+    ShellLocationModeSetting(@NonNull ShellSettingsAccessor settings) {
         this.settings = settings;
-        this.uiAutomation = uiAutomation;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -147,11 +144,6 @@ class ShellLocationModeSetting {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private boolean clickNetworkConsentAgreeButton() {
-        if (uiAutomation == null) {
-            Log.e(TAG, "UiAutomationConnection not provided, cannot click network provider consent dialog");
-            return false;
-        }
-
         try {
             // This is race-y... after turning on the network provider, something
             // else *might* turn it back off until you click an Accept button...
@@ -171,7 +163,7 @@ class ShellLocationModeSetting {
 
             boolean clickedAgree = false;
             for (int i = 0; i < NETWORK_CONTENT_CLICK_ATTEMPTS; i++) {
-                clickedAgree = clickedAgree || tryClickingConsentAgreeButton(uiAutomation, i);
+                clickedAgree = clickedAgree || tryClickingConsentAgreeButton(i);
 
                 if (clickedAgree) {
                     if (isProviderEnabled(getLocationProviders(), LocationManager.NETWORK_PROVIDER)) {
@@ -190,12 +182,15 @@ class ShellLocationModeSetting {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             return false;
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to click network consent dialog", e);
+            return false;
         }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private static boolean tryClickingConsentAgreeButton(@NonNull UiAutomationConnectionWrapper uiAutomation, int attemptNumber) {
-        AccessibilityNodeInfo rootInActiveWindow = uiAutomation.getRootInActiveWindow();
+    private static boolean tryClickingConsentAgreeButton(int attemptNumber) throws Exception {
+        AccessibilityNodeInfo rootInActiveWindow = UiAutomationConnectionWrapper.getRootInActiveWindow();
         Log.d(TAG, "Current view: " + rootInActiveWindow.getPackageName());
 
         if (!NETWORK_CONSENT_ACTIVITY_PACKAGE_NAME.equalsIgnoreCase(rootInActiveWindow.getPackageName().toString())) {
