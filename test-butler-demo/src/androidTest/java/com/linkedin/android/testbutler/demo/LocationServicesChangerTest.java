@@ -17,14 +17,20 @@ package com.linkedin.android.testbutler.demo;
 
 import android.content.Context;
 import android.location.LocationManager;
+import android.os.Build;
 import android.provider.Settings;
+
 import androidx.test.core.app.ApplicationProvider;
+
 import com.linkedin.android.testbutler.TestButler;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
+import static org.junit.Assume.assumeTrue;
 
 public class LocationServicesChangerTest {
 
@@ -38,6 +44,8 @@ public class LocationServicesChangerTest {
 
     @Test
     public void alwaysLeavePassiveProviderEnabled() {
+        assumeTrue("Only works before Android Q", Build.VERSION.SDK_INT < Build.VERSION_CODES.Q);
+
         // the passive provider is always enabled, regardless of the user's location preferences
         TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_OFF);
         assertTrue(manager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER));
@@ -53,7 +61,10 @@ public class LocationServicesChangerTest {
     }
 
     @Test
-    public void neverEnableNetworkProvider() {
+    public void neverEnableNetworkProviderOnEmulator() {
+        assumeTrue("Only works before Android Q", Build.VERSION.SDK_INT < Build.VERSION_CODES.Q);
+        assumeTrue("Device is not an emulator", Build.FINGERPRINT.contains("generic"));
+
         // the network provider doesn't work on emulators, so nothing we do should be able to turn it on
         // http://stackoverflow.com/questions/2424564/activating-network-location-provider-in-the-android-emulator
         TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_OFF);
@@ -70,7 +81,27 @@ public class LocationServicesChangerTest {
     }
 
     @Test
+    public void enableNetworkProviderOnPhysicalDevice() {
+        assumeTrue("Only works before Android Q", Build.VERSION.SDK_INT < Build.VERSION_CODES.Q);
+        assumeFalse("Device is an emulator", Build.FINGERPRINT.contains("generic"));
+
+        TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_OFF);
+        assertFalse(manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER));
+
+        TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_SENSORS_ONLY);
+        assertFalse(manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER));
+
+        TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_BATTERY_SAVING);
+        assertTrue(manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER));
+
+        TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_HIGH_ACCURACY);
+        assertTrue(manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER));
+    }
+
+    @Test
     public void enableGpsProviderForSensorsAndHighAccuracyOnly() {
+        assumeTrue("Only works before Android Q", Build.VERSION.SDK_INT < Build.VERSION_CODES.Q);
+
         TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_OFF);
         assertFalse(manager.isProviderEnabled(LocationManager.GPS_PROVIDER));
 
@@ -82,5 +113,22 @@ public class LocationServicesChangerTest {
 
         TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_HIGH_ACCURACY);
         assertTrue(manager.isProviderEnabled(LocationManager.GPS_PROVIDER));
+    }
+
+    @Test
+    public void enableLocationModePostAndroidQ() {
+        assumeTrue("Only for Android Q or later", Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q);
+
+        TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_OFF);
+        assertFalse(manager.isLocationEnabled());
+
+        TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_SENSORS_ONLY);
+        assertTrue(manager.isLocationEnabled());
+
+        TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_BATTERY_SAVING);
+        assertTrue(manager.isLocationEnabled());
+
+        TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_HIGH_ACCURACY);
+        assertTrue(manager.isLocationEnabled());
     }
 }

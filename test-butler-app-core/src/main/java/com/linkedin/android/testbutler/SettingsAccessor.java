@@ -24,7 +24,7 @@ import androidx.annotation.Nullable;
 /**
  * Implementations of this class allow access to, and modification of, {@link Settings}.
  */
-interface SettingsAccessor {
+public interface SettingsAccessor {
     /**
      * @return Accessor for {@link Settings.Global}
      */
