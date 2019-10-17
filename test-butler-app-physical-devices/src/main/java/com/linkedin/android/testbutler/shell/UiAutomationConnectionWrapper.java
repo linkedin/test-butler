@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import java.io.Closeable;
@@ -81,11 +82,9 @@ class UiAutomationConnectionWrapper implements Closeable {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    @NonNull
-    static AccessibilityNodeInfo getRootInActiveWindow() throws Exception {
-        try (UiAutomationConnectionWrapper uiAutomation = UiAutomationConnectionWrapper.newInstance()) {
-            return uiAutomation.uiAutomation.getRootInActiveWindow();
-        }
+    @Nullable
+    AccessibilityNodeInfo getRootInActiveWindow() throws Exception {
+        return uiAutomation.getRootInActiveWindow();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
