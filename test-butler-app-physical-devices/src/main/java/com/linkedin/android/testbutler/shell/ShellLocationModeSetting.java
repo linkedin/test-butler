@@ -161,20 +161,23 @@ class ShellLocationModeSetting {
 
             Log.d(TAG, "Network provider was disabled, looking for consent dialog");
 
-            boolean clickedAgree = false;
-            for (int i = 0; i < NETWORK_CONTENT_CLICK_ATTEMPTS; i++) {
-                clickedAgree = clickedAgree || tryClickingConsentAgreeButton(i);
+            try (UiAutomationConnectionWrapper uiAutomation = UiAutomationConnectionWrapper.newInstance()) {
+                boolean clickedAgree = false;
+                for (int i = 0; i < NETWORK_CONTENT_CLICK_ATTEMPTS; i++) {
+                    clickedAgree = clickedAgree || tryClickingConsentAgreeButton(uiAutomation, i);
 
-                if (clickedAgree) {
-                    if (isProviderEnabled(getLocationProviders(), LocationManager.NETWORK_PROVIDER)) {
-                        return true;
+                    if (clickedAgree) {
+                        if (isProviderEnabled(getLocationProviders(), LocationManager.NETWORK_PROVIDER)) {
+                            return true;
+                        }
+
+                        Log.d(TAG, String.format("Waiting for network provider to be re-enabled... (%s/%s)",
+                                i + 1, NETWORK_CONTENT_CLICK_ATTEMPTS));
+                        Thread.sleep(NETWORK_CONTENT_SLEEP_BETWEEN_ATTEMPTS_MS);
+                    } else if (i < NETWORK_CONTENT_CLICK_ATTEMPTS - 1) {
+                        // don't bother waiting on last iteration if we didn't click accept yet...
+                        Thread.sleep(NETWORK_CONTENT_SLEEP_BETWEEN_ATTEMPTS_MS);
                     }
-
-                    Log.d(TAG, String.format("Waiting for network provider to be re-enabled... (%s/4)", i + 1));
-                    Thread.sleep(NETWORK_CONTENT_SLEEP_BETWEEN_ATTEMPTS_MS);
-                } else if (i < NETWORK_CONTENT_CLICK_ATTEMPTS - 1) {
-                    // don't bother waiting on last iteration if we didn't click accept yet...
-                    Thread.sleep(NETWORK_CONTENT_SLEEP_BETWEEN_ATTEMPTS_MS);
                 }
             }
 
@@ -189,18 +192,21 @@ class ShellLocationModeSetting {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private static boolean tryClickingConsentAgreeButton(int attemptNumber) throws Exception {
-        AccessibilityNodeInfo rootInActiveWindow = UiAutomationConnectionWrapper.getRootInActiveWindow();
-        Log.d(TAG, "Current view: " + rootInActiveWindow.getPackageName());
+    private static boolean tryClickingConsentAgreeButton(UiAutomationConnectionWrapper uiAutomation, int attemptNumber) throws Exception {
+        AccessibilityNodeInfo rootInActiveWindow = uiAutomation.getRootInActiveWindow();
+        String activeWindowPackageName = rootInActiveWindow == null ? null : rootInActiveWindow.getPackageName().toString();
+        Log.d(TAG, "Current view: " + activeWindowPackageName);
 
-        if (!NETWORK_CONSENT_ACTIVITY_PACKAGE_NAME.equalsIgnoreCase(rootInActiveWindow.getPackageName().toString())) {
-            Log.d(TAG, String.format("Accept network provider consent dialog not found... (%s/4)", attemptNumber + 1));
+        if (rootInActiveWindow == null || !NETWORK_CONSENT_ACTIVITY_PACKAGE_NAME.equalsIgnoreCase(activeWindowPackageName)) {
+            Log.d(TAG, String.format("Accept network provider consent dialog not found... (%s/%s)",
+                    attemptNumber + 1, NETWORK_CONTENT_CLICK_ATTEMPTS));
             return false;
         }
 
         AccessibilityNodeInfo acceptButton = getNetworkConsentAgreeButton(rootInActiveWindow);
         if (acceptButton == null) {
-            Log.d(TAG, String.format("Did not find accept button on network provider consent dialog... (%s/4)", attemptNumber + 1));
+            Log.d(TAG, String.format("Did not find accept button on network provider consent dialog... (%s/%s)",
+                    attemptNumber + 1, NETWORK_CONTENT_CLICK_ATTEMPTS));
             return false;
         }
 
@@ -222,9 +228,12 @@ class ShellLocationModeSetting {
 
         int count = node.getChildCount();
         for (int i = 0; i < count; i++) {
-            AccessibilityNodeInfo button = getNetworkConsentAgreeButton(node.getChild(i));
-            if (button != null) {
-                return button;
+            AccessibilityNodeInfo child = node.getChild(i);
+            if (child != null) {
+                AccessibilityNodeInfo button = getNetworkConsentAgreeButton(child);
+                if (button != null) {
+                    return button;
+                }
             }
         }
 
