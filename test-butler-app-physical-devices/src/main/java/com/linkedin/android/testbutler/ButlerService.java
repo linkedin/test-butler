@@ -162,6 +162,11 @@ public class ButlerService extends Service {
             public boolean setAlwaysFinishActivitiesState(boolean enabled) throws RemoteException {
                 return butlerApi.setAlwaysFinishActivitiesState(enabled);
             }
+
+            @Override
+            public boolean setAccessibilityServiceState(boolean enabled) throws RemoteException {
+                return butlerApi.setAccessibilityServiceState(enabled);
+            }
         };
     }
 }

@@ -39,4 +39,6 @@ interface ButlerApi {
     boolean setImmersiveModeConfirmation(boolean enabled);
 
     boolean setAlwaysFinishActivitiesState(boolean enabled);
+
+    boolean setAccessibilityServiceState(boolean enabled);
 }
