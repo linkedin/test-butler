@@ -1,5 +1,11 @@
 # Change Log
 
+## Version 2.0.1 (2019-11-4)
+
+- (Experimental) Add Test Butler APK for Physical Devices
+- Allow Test Butler to run on Android Q(10) [#89](https://github.com/linkedin/test-butler/issues/89)
+- Use instrumentation context to avoid crashes [#86](https://github.com/linkedin/test-butler/issues/86)
+
 ## Version 2.0.0 (2018-11-27)
 
 - Migrate to AndroidX libraries
