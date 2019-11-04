@@ -19,8 +19,6 @@ import android.accessibilityservice.AccessibilityService;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 
-import androidx.annotation.RequiresApi;
-
 public class ButlerAccessibilityService extends AccessibilityService {
 
     static final String SERVICE_NAME = ButlerAccessibilityService.class.getSimpleName();
@@ -34,6 +32,14 @@ public class ButlerAccessibilityService extends AccessibilityService {
     private static final Object sInstanceDestroyLock = new Object();
 
     private static ButlerAccessibilityService sInstance;
+
+    private AccessibilityManager accessibilityManager;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        accessibilityManager = (AccessibilityManager) this.getSystemService(ACCESSIBILITY_SERVICE);
+    }
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -49,18 +55,22 @@ public class ButlerAccessibilityService extends AccessibilityService {
     protected void onServiceConnected() {
         super.onServiceConnected();
         sInstance = this;
-        AccessibilityManager accessibilityManager =
-                (AccessibilityManager) this.getSystemService(ACCESSIBILITY_SERVICE);
-        accessibilityManager.addAccessibilityStateChangeListener(new AccessibilityManager.AccessibilityStateChangeListener() {
-            @Override
-            public void onAccessibilityStateChanged(boolean enabled) {
-                if (enabled) {
-                    synchronized (sInstanceCreateLock) {
-                        sInstanceCreateLock.notifyAll();
+        if (accessibilityManager.isEnabled()) {
+            synchronized (sInstanceCreateLock) {
+                sInstanceCreateLock.notifyAll();
+            }
+        } else {
+            accessibilityManager.addAccessibilityStateChangeListener(new AccessibilityManager.AccessibilityStateChangeListener() {
+                @Override
+                public void onAccessibilityStateChanged(boolean enabled) {
+                    if (enabled) {
+                        synchronized (sInstanceCreateLock) {
+                            sInstanceCreateLock.notifyAll();
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
 
     }
 
@@ -68,28 +78,22 @@ public class ButlerAccessibilityService extends AccessibilityService {
     public void onDestroy() {
         super.onDestroy();
         sInstance = null;
-        AccessibilityManager accessibilityManager =
-                (AccessibilityManager) this.getSystemService(ACCESSIBILITY_SERVICE);
-        accessibilityManager.addAccessibilityStateChangeListener(new AccessibilityManager.AccessibilityStateChangeListener() {
-            @Override
-            public void onAccessibilityStateChanged(boolean enabled) {
-                if (!enabled) {
-                    synchronized (sInstanceDestroyLock) {
-                        sInstanceDestroyLock.notifyAll();
+        if (!accessibilityManager.isEnabled()) {
+            synchronized (sInstanceDestroyLock) {
+                sInstanceDestroyLock.notifyAll();
+            }
+        } else {
+            accessibilityManager.addAccessibilityStateChangeListener(new AccessibilityManager.AccessibilityStateChangeListener() {
+                @Override
+                public void onAccessibilityStateChanged(boolean enabled) {
+                    if (!enabled) {
+                        synchronized (sInstanceDestroyLock) {
+                            sInstanceDestroyLock.notifyAll();
+                        }
                     }
                 }
-            }
-        });
-    }
-
-    @RequiresApi(api = 24)
-    public static boolean disable() {
-        if (sInstance != null) {
-            sInstance.disableSelf();
-            return true;
+            });
         }
-
-        return false;
     }
 
     static boolean waitForLaunch() {

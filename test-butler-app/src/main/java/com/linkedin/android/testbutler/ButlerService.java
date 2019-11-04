@@ -46,6 +46,7 @@ public class ButlerService extends Service {
     private PermissionGranter permissionGranter;
     private CommonDeviceLocks locks;
     private AccessibilityServiceEnabler accessibilityServiceEnabler;
+    private AccessibilityServiceWaiter accessibilityServiceWaiter;
 
     private ButlerApiStubBase butlerApi = new ButlerApiStubBase() {
         @Override
@@ -66,7 +67,11 @@ public class ButlerService extends Service {
 
         @Override
         public boolean setAccessibilityServiceState(boolean enabled) throws RemoteException {
-            return accessibilityServiceEnabler.setAccessibilityServiceEnabled(enabled);
+            boolean successful = accessibilityServiceEnabler.setAccessibilityServiceEnabled(enabled);
+            if (successful) {
+                accessibilityServiceWaiter.waitForAccessibilityService(enabled);
+            }
+            return successful;
         }
 
         @Override
@@ -102,6 +107,7 @@ public class ButlerService extends Service {
             }
         };
         accessibilityServiceEnabler = new AccessibilityServiceEnabler(serviceProvider, settings);
+        accessibilityServiceWaiter = new AccessibilityServiceWaiter();
         locks = new CommonDeviceLocks();
         locks.acquire(this);
 

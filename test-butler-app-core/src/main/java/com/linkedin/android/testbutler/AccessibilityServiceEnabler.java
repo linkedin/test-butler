@@ -16,7 +16,6 @@
 package com.linkedin.android.testbutler;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
-import android.os.Build;
 import android.os.RemoteException;
 import android.provider.Settings;
 
@@ -73,51 +72,31 @@ public class AccessibilityServiceEnabler {
                         Settings.Secure.ACCESSIBILITY_ENABLED,
                         1);
 
-                if (!ButlerAccessibilityService.waitForLaunch()) {
-                    settingsAccessor.secure().putString(
-                            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
-                            enabledServices);
-
-                    throw new RuntimeException("Starting Butler accessibility service took " +
-                            "longer than " + ButlerAccessibilityService.CREATE_DESTROY_TIMEOUT
-                            + "ms");
-                }
-
                 return true;
             }
             return false;
         } else {
-            if (Build.VERSION.SDK_INT >= 24) {
-                return ButlerAccessibilityService.disable();
-            } else {
-                final String enabledServices = settingsAccessor.secure().getString(
-                        Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
+            final String enabledServices = settingsAccessor.secure().getString(
+                    Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
 
-                if (enabledServices == null ||
-                        !enabledServices.contains(ButlerAccessibilityService.SERVICE_NAME)) {
-                    return false;
-                }
-
-                String id = findButlerAccessibilityServiceId();
-                if (id != null && id.endsWith(ButlerAccessibilityService.SERVICE_NAME)) {
-                    if (!enabledServices.contains(id)) {
-                        return false;
-                    }
-                    String newServices = enabledServices.replaceAll(id + ":?", "");
-                    settingsAccessor.secure().putString(
-                            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
-                            newServices);
-
-                    if (!ButlerAccessibilityService.waitForDestroy()) {
-                        throw new RuntimeException("Shutting down Butler accessibility " +
-                                "service took longer than "
-                                + ButlerAccessibilityService.CREATE_DESTROY_TIMEOUT + "ms");
-                    }
-
-                    return true;
-                }
+            if (enabledServices == null ||
+                    !enabledServices.contains(ButlerAccessibilityService.SERVICE_NAME)) {
                 return false;
             }
+
+            String id = findButlerAccessibilityServiceId();
+            if (id != null && id.endsWith(ButlerAccessibilityService.SERVICE_NAME)) {
+                if (!enabledServices.contains(id)) {
+                    return false;
+                }
+                String newServices = enabledServices.replaceAll(id + ":?", "");
+                settingsAccessor.secure().putString(
+                        Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
+                        newServices);
+
+                return true;
+            }
+            return false;
         }
     }
 

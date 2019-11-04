@@ -49,7 +49,7 @@ class AccessibilityManagerWrapper implements InstalledAccessibilityServiceProvid
             Method method = ReflectionUtils.getMethod(iAccessibilityService.getClass(),
                     "getInstalledAccessibilityServiceList", int.class);
             List<AccessibilityServiceInfo> serviceInfos =
-                    (List<AccessibilityServiceInfo>) method.invoke(iAccessibilityService, -1);
+                    (List<AccessibilityServiceInfo>) method.invoke(iAccessibilityService, 0);
             if (serviceInfos != null) {
                 return serviceInfos;
             }
