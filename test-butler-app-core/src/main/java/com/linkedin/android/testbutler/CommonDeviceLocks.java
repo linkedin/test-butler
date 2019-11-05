@@ -44,7 +44,7 @@ class CommonDeviceLocks {
     void acquire(@NonNull Context context) {
         // Acquire a WifiLock to prevent wifi from turning off and breaking tests
         // NOTE: holding a WifiLock does NOT override a call to setWifiEnabled(false)
-        WifiManager wifiManager = (WifiManager) context.getSystemService(WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(WIFI_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "ButlerWifiLock");
         } else {
