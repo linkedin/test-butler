@@ -29,7 +29,7 @@ import java.lang.reflect.Method;
  * {@link NoDialogActivityController} disables the system dialogs for app crashes and ANRs so that other apps crashing
  * on an emulator will not prevent Espresso UI tests from running.
  * <p>
- * {@link IActivityController} is an interface provided by the Android OS to facilitate testing.
+ * IActivityController is an interface provided by the Android OS to facilitate testing.
  * If set, the class is called by the Android system and can prevent activities from starting
  * or resuming, as well as disable the default system dialogs that appear when an app crashes or
  * ANRs. An example of a class implementing this interface can be found in the AOSP class Monkey.java:
@@ -40,7 +40,7 @@ import java.lang.reflect.Method;
  * with the system signing key. The signing key for the stock emulators is openly available, so we can sign this
  * app with that key, but that means it can only be installed on stock emulators.
  * <p>
- * Note: In order to implement the {@link IActivityController} interface, a copy of the .aidl file is included
+ * Note: In order to implement the IActivityController interface, a copy of the .aidl file is included
  * in this project.
  */
 public class NoDialogActivityController extends IActivityController.Stub {
@@ -93,21 +93,21 @@ public class NoDialogActivityController extends IActivityController.Stub {
     }
 
     /**
-     * Install an instance of this class as the {@link IActivityController} to monitor the ActivityManager
+     * Install an instance of this class as the IActivityController to monitor the ActivityManager
      */
     public static void install() {
         setActivityController(new NoDialogActivityController());
     }
 
     /**
-     * Remove any installed {@link IActivityController} to reset the ActivityManager to the default state
+     * Remove any installed IActivityController to reset the ActivityManager to the default state
      */
     public static void uninstall() {
         setActivityController(null);
     }
 
     /**
-     * Use reflection to call the hidden api and set a custom {@link IActivityController}:
+     * Use reflection to call the hidden api and set a custom IActivityController:
      * ActivityManagerNative.getDefault().setActivityController(activityController);
      */
     private static void setActivityController(@Nullable IActivityController activityController) {
