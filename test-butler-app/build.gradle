@@ -59,13 +59,13 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 publishing {
     publications {
         ivyApk(IvyPublication) {
-          from new org.gradle.api.internal.java.JavaLibrary(new org.gradle.api.internal.artifacts.publish.DefaultPublishArtifact(project.getName(), 'apk', 'apk', null, new Date(), new File("$buildDir/outputs/apk/release/${project.getName()}-release.apk"), assemble), project.configurations.compile.getAllDependencies())
+          from new org.gradle.api.internal.java.JavaLibrary(new org.gradle.api.internal.artifacts.publish.DefaultPublishArtifact(project.getName(), 'apk', 'apk', null, new Date(), new File("$buildDir/outputs/apk/release/${project.getName()}-release.apk"), assemble), project.configurations.default.getAllDependencies())
           artifact sourcesJar
           artifact javadocJar
         }
         apk(MavenPublication) {
 
-            from new org.gradle.api.internal.java.JavaLibrary(new org.gradle.api.internal.artifacts.publish.DefaultPublishArtifact(project.getName(), 'apk', 'apk', null, new Date(), new File("$buildDir/outputs/apk/release/${project.getName()}-release.apk"), assemble), project.configurations.compile.getAllDependencies())
+            from new org.gradle.api.internal.java.JavaLibrary(new org.gradle.api.internal.artifacts.publish.DefaultPublishArtifact(project.getName(), 'apk', 'apk', null, new Date(), new File("$buildDir/outputs/apk/release/${project.getName()}-release.apk"), assemble), project.configurations.default.getAllDependencies())
 
             artifact sourcesJar
             artifact javadocJar
