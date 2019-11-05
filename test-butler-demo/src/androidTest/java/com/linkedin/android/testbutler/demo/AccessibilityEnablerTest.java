@@ -15,6 +15,7 @@
  */
 package com.linkedin.android.testbutler.demo;
 
+import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
 import android.view.accessibility.AccessibilityManager;
 
@@ -24,6 +25,8 @@ import com.linkedin.android.testbutler.TestButler;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.List;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -42,9 +45,20 @@ public class AccessibilityEnablerTest {
     @Test
     public void startAndStopAccessibility() {
         TestButler.setAccessibilityServiceState(true);
-        assertTrue(accessibilityManager.isEnabled());
+        assertTrue(isButlerAccessibilityServiceEnabled());
 
         TestButler.setAccessibilityServiceState(false);
-        assertFalse(accessibilityManager.isEnabled());
+        assertFalse(isButlerAccessibilityServiceEnabled());
+    }
+
+    private boolean isButlerAccessibilityServiceEnabled() {
+        List<AccessibilityServiceInfo> serviceInfoList = accessibilityManager
+                .getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_SPOKEN);
+        for (AccessibilityServiceInfo info : serviceInfoList) {
+            if (info.getId().endsWith("ButlerAccessibilityService")) {
+                return true;
+            }
+        }
+        return false;
     }
 }

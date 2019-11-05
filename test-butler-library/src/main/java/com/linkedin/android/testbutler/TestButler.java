@@ -344,10 +344,10 @@ public class TestButler {
         verifyApiReady();
         try {
             if (!butlerApi.setAccessibilityServiceState(enabled)) {
-                throw new IllegalStateException("Failed to set start accessibility service!");
+                throw new IllegalStateException("Failed to set accessibility service state!");
             }
         } catch (RemoteException e) {
-            throw new IllegalStateException("Failed to set start accessibility service!");
+            throw new IllegalStateException("Failed to set accessibility service state!");
         }
     }
 

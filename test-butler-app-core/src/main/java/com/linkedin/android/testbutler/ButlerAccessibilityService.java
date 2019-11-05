@@ -31,7 +31,7 @@ public class ButlerAccessibilityService extends AccessibilityService {
     private static final Object sInstanceCreateLock = new Object();
     private static final Object sInstanceDestroyLock = new Object();
 
-    private static ButlerAccessibilityService sInstance;
+    private static volatile ButlerAccessibilityService sInstance;
 
     private AccessibilityManager accessibilityManager;
 
@@ -67,6 +67,7 @@ public class ButlerAccessibilityService extends AccessibilityService {
                         synchronized (sInstanceCreateLock) {
                             sInstanceCreateLock.notifyAll();
                         }
+                        accessibilityManager.removeAccessibilityStateChangeListener(this);
                     }
                 }
             });
@@ -90,6 +91,7 @@ public class ButlerAccessibilityService extends AccessibilityService {
                         synchronized (sInstanceDestroyLock) {
                             sInstanceDestroyLock.notifyAll();
                         }
+                        accessibilityManager.removeAccessibilityStateChangeListener(this);
                     }
                 }
             });
@@ -115,7 +117,6 @@ public class ButlerAccessibilityService extends AccessibilityService {
                 }
             } catch (InterruptedException ignored) { }
         }
-
         return sInstance == null;
     }
 }
