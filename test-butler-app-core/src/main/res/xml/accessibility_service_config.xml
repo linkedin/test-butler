@@ -14,6 +14,7 @@
   limitations under the License.
 -->
 <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:description="@string/accessibility_service_description"
     android:accessibilityEventTypes="typeAllMask"
     android:accessibilityFeedbackType="feedbackSpoken|feedbackHaptic|feedbackAudible"
@@ -23,4 +24,5 @@
     android:canControlMagnification="true"
     android:canRetrieveWindowContent="true"
     android:canRequestFingerprintGestures="true"
-    android:notificationTimeout="0" />
+    android:notificationTimeout="0"
+    tools:ignore="UnusedAttribute" />

@@ -94,15 +94,6 @@ public class ShellButlerService implements Closeable {
         public boolean setAccessibilityServiceState(boolean enabled) throws RemoteException {
             return accessibilityServiceEnabler.setAccessibilityServiceEnabled(enabled);
         }
-
-        @Override
-        public void onDestroy() {
-            super.onDestroy();
-            // Turn the accessibility service off it we enabled it
-            try {
-                accessibilityServiceEnabler.setAccessibilityServiceEnabled(false);
-            } catch (RemoteException ignored) { }
-        }
     };
 
     private ShellButlerService(@NonNull ShellSettingsAccessor settings) {
@@ -136,6 +127,11 @@ public class ShellButlerService implements Closeable {
 
         // Uninstall our IActivityController to resume normal Activity behavior
         NoDialogActivityController.uninstall();
+
+        // Turn the accessibility service off it we enabled it
+        try {
+            accessibilityServiceEnabler.setAccessibilityServiceEnabled(false);
+        } catch (RemoteException ignored) { }
 
         Log.d(TAG, "ShellButlerService shut down completed");
     }

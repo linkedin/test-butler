@@ -16,6 +16,7 @@
 package com.linkedin.android.testbutler;
 
 import android.accessibilityservice.AccessibilityService;
+import android.os.SystemClock;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 
@@ -100,22 +101,36 @@ public class ButlerAccessibilityService extends AccessibilityService {
 
     static boolean waitForLaunch() {
         if (sInstance == null) {
-            try {
-                synchronized (sInstanceCreateLock) {
-                    sInstanceCreateLock.wait(CREATE_DESTROY_TIMEOUT);
+            synchronized (sInstanceCreateLock) {
+                try {
+                    long timeSlept = 0;
+                    while (sInstance == null && timeSlept < CREATE_DESTROY_TIMEOUT) {
+                        long sleepStart = SystemClock.uptimeMillis();
+                        sInstanceCreateLock.wait(CREATE_DESTROY_TIMEOUT - timeSlept);
+                        timeSlept += SystemClock.uptimeMillis() - sleepStart;
+                    }
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (InterruptedException ignored) { }
+            }
         }
         return sInstance != null;
     }
 
     static boolean waitForDestroy() {
         if (sInstance != null) {
-            try {
-                synchronized (sInstanceDestroyLock) {
-                    sInstanceDestroyLock.wait(CREATE_DESTROY_TIMEOUT);
+            synchronized (sInstanceDestroyLock) {
+                try {
+                    long timeSlept = 0;
+                    while (sInstance != null && timeSlept < CREATE_DESTROY_TIMEOUT) {
+                        long sleepStart = SystemClock.uptimeMillis();
+                        sInstanceDestroyLock.wait(CREATE_DESTROY_TIMEOUT - timeSlept);
+                        timeSlept += SystemClock.uptimeMillis() - sleepStart;
+                    }
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (InterruptedException ignored) { }
+            }
         }
         return sInstance == null;
     }

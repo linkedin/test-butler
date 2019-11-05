@@ -73,15 +73,6 @@ public class ButlerService extends Service {
             }
             return successful;
         }
-
-        @Override
-        public void onDestroy() {
-            super.onDestroy();
-            // Turn the accessibility service off it we enabled it
-            try {
-                accessibilityServiceEnabler.setAccessibilityServiceEnabled(false);
-            } catch (RemoteException ignored) { }
-        }
     };
 
     @Override
@@ -125,6 +116,11 @@ public class ButlerService extends Service {
 
         // Uninstall our IActivityController to resume normal Activity behavior
         NoDialogActivityController.uninstall();
+
+        // Turn the accessibility service off it we enabled it
+        try {
+            accessibilityServiceEnabler.setAccessibilityServiceEnabled(false);
+        } catch (RemoteException ignored) { }
 
         butlerApi.onDestroy();
         locks.release();

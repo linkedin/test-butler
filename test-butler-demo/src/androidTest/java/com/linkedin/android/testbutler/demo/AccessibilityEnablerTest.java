@@ -25,15 +25,23 @@ import com.linkedin.android.testbutler.TestButler;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.List;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@RunWith(Parameterized.class)
 public class AccessibilityEnablerTest {
 
     private AccessibilityManager accessibilityManager;
+
+    @Parameterized.Parameters
+    public static Object[][] data() {
+        return new Object[1000][0];
+    }
 
     @Before
     public void setup() {
