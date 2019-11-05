@@ -15,6 +15,8 @@
  */
 package com.linkedin.android.testbutler;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
@@ -74,6 +76,9 @@ class AdbDevice {
         }
     }
 
+    // Suppressing the serial identifier warning, as we need a guaranteed unique ID for all devices
+    @SuppressLint("HardwareIds")
+    @TargetApi(Build.VERSION_CODES.O)
     private static AdbDevice getDevicePreO(String host, int port) {
         try {
             String deviceId = Build.SERIAL;
