@@ -1,6 +1,6 @@
 # Change Log
 
-## Version 2.0.1 (2019-11-4)
+## Version 2.0.1 (2019-11-5)
 
 - (Experimental) Add Test Butler APK for Physical Devices
 - Allow Test Butler to run on Android Q(10) [#89](https://github.com/linkedin/test-butler/issues/89)
