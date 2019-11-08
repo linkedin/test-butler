@@ -52,13 +52,13 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 publishing {
     publications {
         ivyLib(IvyPublication) {
-          from new org.gradle.api.internal.java.JavaLibrary(new org.gradle.api.internal.artifacts.publish.DefaultPublishArtifact(project.getName(), 'aar', 'aar', null, new Date(), new File("$buildDir/outputs/aar/${project.getName()}-release.aar"), assemble), project.configurations.compile.getAllDependencies())
+          from new org.gradle.api.internal.java.JavaLibrary(new org.gradle.api.internal.artifacts.publish.DefaultPublishArtifact(project.getName(), 'aar', 'aar', null, new Date(), new File("$buildDir/outputs/aar/${project.getName()}-release.aar"), assemble), project.configurations.releaseRuntimeClasspath.getAllDependencies())
           artifact sourcesJar
           artifact javadocJar
         }
 
         lib(MavenPublication) {
-          from new org.gradle.api.internal.java.JavaLibrary(new org.gradle.api.internal.artifacts.publish.DefaultPublishArtifact(project.getName(), 'aar', 'aar', null, new Date(), new File("$buildDir/outputs/aar/${project.getName()}-release.aar"), assemble), project.configurations.compile.getAllDependencies())
+          from new org.gradle.api.internal.java.JavaLibrary(new org.gradle.api.internal.artifacts.publish.DefaultPublishArtifact(project.getName(), 'aar', 'aar', null, new Date(), new File("$buildDir/outputs/aar/${project.getName()}-release.aar"), assemble), project.configurations.releaseRuntimeClasspath.getAllDependencies())
 
             artifact sourcesJar
             artifact javadocJar
