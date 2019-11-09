@@ -25,6 +25,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.BundleCompat;
 
+import com.linkedin.android.testbutler.AccessibilityServiceEnabler;
 import com.linkedin.android.testbutler.ButlerApi;
 import com.linkedin.android.testbutler.ButlerApiStubBase;
 import com.linkedin.android.testbutler.NoDialogActivityController;
@@ -58,6 +59,7 @@ public class ShellButlerService implements Closeable {
     private GsmDataDisabler gsmDataDisabler;
     private PermissionGranter permissionGranter;
     private WifiManagerWrapper wifiManager;
+    private AccessibilityServiceEnabler accessibilityServiceEnabler;
 
     private final ButlerApiStubBase butlerApi = new ButlerApiStubBase() {
         @Override
@@ -87,6 +89,11 @@ public class ShellButlerService implements Closeable {
         public boolean grantPermission(String packageName, String permission) throws RemoteException {
             return permissionGranter.grantPermission(packageName, permission);
         }
+
+        @Override
+        public boolean setAccessibilityServiceState(boolean enabled) throws RemoteException {
+            return accessibilityServiceEnabler.setAccessibilityServiceEnabled(enabled);
+        }
     };
 
     private ShellButlerService(@NonNull ShellSettingsAccessor settings) {
@@ -100,6 +107,8 @@ public class ShellButlerService implements Closeable {
 
         gsmDataDisabler = new GsmDataDisabler(serviceManager);
         permissionGranter = new PermissionGranter(serviceManager);
+        AccessibilityManagerWrapper accessibilityWrapper = new AccessibilityManagerWrapper(serviceManager);
+        accessibilityServiceEnabler = new AccessibilityServiceEnabler(accessibilityWrapper, settings);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             wifiManager = WifiManagerWrapper.getInstance(serviceManager);
@@ -118,6 +127,11 @@ public class ShellButlerService implements Closeable {
 
         // Uninstall our IActivityController to resume normal Activity behavior
         NoDialogActivityController.uninstall();
+
+        // Turn the accessibility service off it we enabled it
+        try {
+            accessibilityServiceEnabler.setAccessibilityServiceEnabled(false);
+        } catch (RemoteException ignored) { }
 
         Log.d(TAG, "ShellButlerService shut down completed");
     }

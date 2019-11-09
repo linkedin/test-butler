@@ -335,6 +335,22 @@ public class TestButler {
         }
     }
 
+    /**
+     * Enable TestButler's dummy accessibility service.
+     *
+     * @param enabled True to enable the accessibility service, false to disable it.
+     */
+    public static void setAccessibilityServiceState(boolean enabled) {
+        verifyApiReady();
+        try {
+            if (!butlerApi.setAccessibilityServiceState(enabled)) {
+                throw new IllegalStateException("Failed to set accessibility service state!");
+            }
+        } catch (RemoteException e) {
+            throw new IllegalStateException("Failed to set accessibility service state!");
+        }
+    }
+
     private static void verifyApiReady() {
         if (butlerApi == null) {
             throw new IllegalStateException("ButlerService is not started!");

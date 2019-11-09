@@ -64,6 +64,7 @@ public class ButlerService extends Service {
     private ButlerApi butlerApi;
     private CommonDeviceLocks locks;
     private KeyguardManager.KeyguardLock keyguardLock;
+    private AccessibilityServiceWaiter accessibilityServiceWaiter;
 
     @Override
     public void onCreate() {
@@ -84,6 +85,7 @@ public class ButlerService extends Service {
                 keyguardLock = keyguardManager.newKeyguardLock("ButlerKeyguardLock");
                 keyguardLock.disableKeyguard();
             }
+            accessibilityServiceWaiter = new AccessibilityServiceWaiter();
 
             Log.d(TAG, "ButlerService startup completed...");
         } catch (InterruptedException e) {
@@ -108,19 +110,19 @@ public class ButlerService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            return butlerApi.asBinder();
-        }
-
-        // Before 8.1, shell user doesn't have CHANGE_WIFI_STATE privileges, so we have to do it
-        // here instead of in ShellButlerService.
-        // Note that after Android 10, you cannot call setWifiEnabled from an app, so it *must* be
-        // done in ShellButlerService (covered by check above).
         return new ButlerApi.Stub() {
             @Override
             public boolean setWifiState(boolean enabled) throws RemoteException {
-                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-                return wifiManager.setWifiEnabled(enabled);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                    return butlerApi.setWifiState(enabled);
+                } else {
+                    // Before 8.1, shell user doesn't have CHANGE_WIFI_STATE privileges, so we have to do it
+                    // here instead of in ShellButlerService.
+                    // Note that after Android 10, you cannot call setWifiEnabled from an app, so it *must* be
+                    // done in ShellButlerService (covered by check above).
+                    WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+                    return wifiManager.setWifiEnabled(enabled);
+                }
             }
 
             @Override
@@ -161,6 +163,15 @@ public class ButlerService extends Service {
             @Override
             public boolean setAlwaysFinishActivitiesState(boolean enabled) throws RemoteException {
                 return butlerApi.setAlwaysFinishActivitiesState(enabled);
+            }
+
+            @Override
+            public boolean setAccessibilityServiceState(boolean enabled) throws RemoteException {
+                boolean successful = butlerApi.setAccessibilityServiceState(enabled);
+                if (successful) {
+                    accessibilityServiceWaiter.waitForAccessibilityService(enabled);
+                }
+                return successful;
             }
         };
     }
