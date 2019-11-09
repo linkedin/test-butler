@@ -57,15 +57,17 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 publishing {
+    def artifactFile = android.applicationVariants.find { it.name == 'release' }.outputs.first().outputFile
+    def artifactExt = artifactFile.name.tokenize('.').last()
     publications {
         ivyApk(IvyPublication) {
-          from new org.gradle.api.internal.java.JavaLibrary(new org.gradle.api.internal.artifacts.publish.DefaultPublishArtifact(project.getName(), 'apk', 'apk', null, new Date(), new File("$buildDir/outputs/apk/release/${project.getName()}-release.apk"), assemble), project.configurations.default.getAllDependencies())
+          from new org.gradle.api.internal.java.JavaLibrary(new org.gradle.api.internal.artifacts.publish.DefaultPublishArtifact(project.getName(), artifactExt, artifactExt, null, new Date(), artifactFile, assemble), project.configurations.default.getAllDependencies())
           artifact sourcesJar
           artifact javadocJar
         }
         apk(MavenPublication) {
 
-            from new org.gradle.api.internal.java.JavaLibrary(new org.gradle.api.internal.artifacts.publish.DefaultPublishArtifact(project.getName(), 'apk', 'apk', null, new Date(), new File("$buildDir/outputs/apk/release/${project.getName()}-release.apk"), assemble), project.configurations.default.getAllDependencies())
+            from new org.gradle.api.internal.java.JavaLibrary(new org.gradle.api.internal.artifacts.publish.DefaultPublishArtifact(project.getName(), artifactExt, artifactExt, null, new Date(), artifactFile, assemble), project.configurations.default.getAllDependencies())
 
             artifact sourcesJar
             artifact javadocJar
