@@ -1,6 +1,12 @@
 # Change Log
 
+## Version 2.0.2 (2019-11-8)
+
+- Fix crashes in test-butler library by publishing new `test-butler-api` artifact
+
 ## Version 2.0.1 (2019-11-5)
+
+- NOTE: This release doesn't work since the `test-butler-api` artifact was not published. Use 2.0.2 instead.
 
 - (Experimental) Add Test Butler APK for Physical Devices
 - Allow Test Butler to run on Android Q(10) [#89](https://github.com/linkedin/test-butler/issues/89)
