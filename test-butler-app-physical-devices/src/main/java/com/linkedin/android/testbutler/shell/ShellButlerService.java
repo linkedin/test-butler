@@ -51,8 +51,6 @@ public class ShellButlerService implements Closeable {
 
     static final String SHELL_PACKAGE = "com.android.shell";
 
-    private static final int CURRENT_USER_ID = -2;
-
     private final CountDownLatch stop = new CountDownLatch(1);
     private final ShellSettingsAccessor settings;
 
@@ -148,8 +146,7 @@ public class ShellButlerService implements Closeable {
         BundleCompat.putBinder(bundle, BUTLER_API_BUNDLE_KEY, butlerApi);
         intent.putExtra(BUTLER_API_BUNDLE_KEY, bundle);
 
-        ActivityManagerWrapper.newInstance().broadcastIntent(null, intent, intent.getType(), null,
-                0, null, null, null, -1, null, true, false, CURRENT_USER_ID);
+        ActivityManagerWrapper.newInstance().broadcastIntent(intent);
     }
 
     public static void main(String[] args) {
