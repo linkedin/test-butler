@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 2.1.0 (2019-11-19)
+
+- Allow TestButler to simulate an AccessibilityService during tests
+
 ## Version 2.0.2 (2019-11-8)
 
 - Fix crashes in test-butler library by publishing new `test-butler-api` artifact
