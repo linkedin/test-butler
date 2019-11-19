@@ -47,7 +47,7 @@ artifactory {
         defaults {
             publications 'apiLib', 'ivyApiLib',
                     'lib', 'ivyLib',
-                    'apk', 'ivyApk',
+                    'apk', 'ivyApk'
                     // 'physicalDeviceApk', 'ivyPhysicalDeviceApk'
         }
 
