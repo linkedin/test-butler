@@ -45,37 +45,28 @@ class ActivityManagerWrapper {
 
     void broadcastIntent(Intent intent) throws RemoteException {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            broadcastIntentPreM(null, intent, intent.getType(), null, 0, null, null, null, -1, true, false, CURRENT_USER_ID);
+            broadcastIntentPreM(intent);
         } else {
-            broadcastIntent(null, intent, intent.getType(), null, 0, null, null, null, -1, null, true, false, CURRENT_USER_ID);
+            broadcastIntentPostM(intent);
         }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    private int broadcastIntent(Object iApplicationThreadCaller, Intent intent,
-                                String resolvedType, Object iIntentReceiverResultTo, int resultCode,
-                                String resultData, Bundle map, String[] requiredPermissions,
-                                int appOp, Bundle options, boolean serialized, boolean sticky,
-                                int userId) throws RemoteException {
+    private void broadcastIntentPostM(Intent intent) throws RemoteException {
         try {
-            return (int) broadcastIntent.invoke(iActivityManager, iApplicationThreadCaller, intent,
-                    resolvedType, iIntentReceiverResultTo, resultCode, resultData, map,
-                    requiredPermissions, appOp, options, serialized, sticky, userId);
+            broadcastIntent.invoke(iActivityManager, null, intent, intent.getType(), null, 0, null,
+                    null, null, -1, null, true, false, CURRENT_USER_ID);
         } catch (Exception e) {
             throw ExceptionCreator.createRemoteException(TAG, "Failed to broadcast intent", e);
         }
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP_MR1)
-    int broadcastIntentPreM(Object iApplicationThreadCaller, Intent intent,
-                            String resolvedType, Object iIntentReceiverResultTo, int resultCode,
-                            String resultData, Bundle map, String requiredPermissions,
-                            int appOp, boolean serialized, boolean sticky, int userId)
+    private void broadcastIntentPreM(Intent intent)
             throws RemoteException {
         try {
-            return (int) broadcastIntent.invoke(iActivityManager, iApplicationThreadCaller, intent,
-                    resolvedType, iIntentReceiverResultTo, resultCode, resultData, map,
-                    requiredPermissions, appOp, serialized, sticky, userId);
+            broadcastIntent.invoke(iActivityManager, null, intent, intent.getType(), null, 0, null,
+                    null, null, -1, true, false, CURRENT_USER_ID);
         } catch (Exception e) {
             throw ExceptionCreator.createRemoteException(TAG, "Failed to broadcast intent", e);
         }
