@@ -47,8 +47,8 @@ artifactory {
         defaults {
             publications 'apiLib', 'ivyApiLib',
                     'lib', 'ivyLib',
-                    'apk', 'ivyApk'
-                    // 'physicalDeviceApk', 'ivyPhysicalDeviceApk'
+                    'apk', 'ivyApk',
+                    'physicalDeviceApk', 'ivyPhysicalDeviceApk'
         }
 
         publishArtifacts = true
@@ -60,6 +60,6 @@ task distributeBuild(type: DistributeTask) {
     dependsOn ':artifactoryPublish',
             'test-butler-api:artifactoryPublish',
             'test-butler-app:artifactoryPublish',
-            // 'test-butler-app-physical-devices:artifactoryPublish',
+            'test-butler-app-physical-devices:artifactoryPublish',
             'test-butler-library:artifactoryPublish'
 }
