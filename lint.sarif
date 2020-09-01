@@ -1,0 +1,50 @@
+{
+    "schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+    "version": "2.1.0",
+    "runs": [
+        {
+            "tool": {
+                "driver": {
+                    "name": "Android Lint",
+                    "version": "27.0.0",
+                    "rules": [
+                        {
+                            "id": "AndroidLint/TextFields",
+                            "shortDescription": "Missing `inputType` or `hint`",
+                            "fullDescription": "Providing an `inputType` attribute on a text field improves usability because depending on the data to be input, optimized keyboards can be shown to the user (such as just digits and parentheses for a phone number). Similarly,a hint attribute displays a hint to the user for what is expected in the text field. The lint detector also looks at the `id` of the view, and if the id offers a hint of the purpose of the field (for example, the `id` contains the phrase `phone` or `email`), then lint will also ensure that the `inputType` contains the corresponding type attributes. If you really want to keep the text field generic, you can suppress this warning by setting `inputType=\"text\"`.",
+                            "defaultConfiguration": {
+                                "level": "warning"
+                            },
+                            "help": {
+                                "text": "Help text"
+                            }
+                        }
+                    ]
+                }
+            },
+            "results": [
+                {
+                    "ruleId": "AndroidLint/TextFields",
+                    "message": {
+                        "text": "Missing `inputType` or `hint`"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uri": "test-butler-demo/src/main/res/layout/activity_main.xml"
+                                },
+                                "region": {
+                                    "startLine": 50,
+                                    "startColumn": 5,
+                                    "endLine": 50,
+                                    "endColumn": 13
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
