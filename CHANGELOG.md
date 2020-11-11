@@ -1,5 +1,10 @@
 # Change Log
 
+## Version 2.1.1 (2020-11-10)
+
+- Increase timeout for TestButler service binding to avoid timeouts on some API levels [#106](https://github.com/linkedin/test-butler/pull/106)
+- Fix physical device artifacts for API 21 and 22 [#101](https://github.com/linkedin/test-butler/pull/106)
+
 ## Version 2.1.0 (2019-11-19)
 
 - Allow TestButler to simulate an AccessibilityService during tests
