@@ -1,9 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.jfrog.artifactory'
-apply plugin: 'ivy-publish'
-apply plugin: 'maven-publish'
-
-version = VERSION_NAME
+apply from: '../gradle/publishing.gradle'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -29,29 +25,6 @@ android {
         warningsAsErrors true
         disable 'OldTargetApi', 'GradleDependency', 'PrivateApi', 'WakelockTimeout'
     }
-}
-
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    from android.sourceSets.main.java.srcDirs
-}
-
-task javadoc(type: Javadoc) {
-    source = android.sourceSets.main.java.srcDirs
-    android.libraryVariants.matching { variant -> variant.name == 'debug'}.all { variant ->
-        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-        classpath += variant.getCompileClasspath(null)
-    }
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-repositories {
-    google()
-    jcenter()
 }
 
 dependencies {
