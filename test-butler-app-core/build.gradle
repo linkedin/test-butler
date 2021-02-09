@@ -23,7 +23,7 @@ android {
         textOutput 'stdout'
         abortOnError true
         warningsAsErrors true
-        disable 'OldTargetApi', 'GradleDependency', 'PrivateApi', 'WakelockTimeout'
+        disable 'OldTargetApi', 'GradleDependency', 'PrivateApi', 'WakelockTimeout', 'DiscouragedPrivateApi'
     }
 }
 
