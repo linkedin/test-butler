@@ -79,9 +79,8 @@ plugins.withId("com.android.application") {
                     //
                     // Please Google, help us simplify this!
                     // https://issuetracker.google.com/issues/179718661
-                    artifact(findApk.getOutputApk()) {
-                        classifier 'apk'
-                    }
+                    artifact(findApk.getOutputApk())
+
                     addArtifacts(publication)
                     customizePom(publication)
                     pom {
