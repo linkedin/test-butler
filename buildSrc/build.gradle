@@ -1,27 +1,9 @@
-plugins {
-    id 'groovy'
-}
-
 repositories {
-    mavenLocal()
+    google()
+    mavenCentral()
     jcenter()
 }
 
-// Our dependencies are pulling in older version of guava,
-// but AGP3 requires a higher version of guava. So, we force it here
-configurations.runtimeClasspath {
-    resolutionStrategy {
-        force 'com.google.guava:guava:23.0'
-    }
-}
-
-dependencies {
-    compile gradleApi()
-    compile localGroovy()
-
-    compile 'org.ajoberstar:gradle-git:1.2.0'
-    compile group: 'org.apache.httpcomponents', name: 'fluent-hc', version: '4.5.2'
-    compile('org.jfrog.buildinfo:build-info-extractor-gradle:4.8.1') {
-        exclude module: 'groovy-all'
-    }
+dependencies() {
+    api "com.android.tools.build:gradle:4.1.2"
 }

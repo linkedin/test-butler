@@ -1,23 +1,23 @@
-import com.linkedin.gradle.DistributeTask
-
 buildscript {
     repositories {
         google()
+        mavenCentral()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.8.1"
+        classpath 'com.android.tools.build:gradle:4.1.2'
     }
 }
 
-apply plugin: 'com.jfrog.artifactory'
-apply plugin: 'maven-publish'
-
 allprojects {
-    group = GROUP_ID
+    repositories {
+        google()
+        mavenCentral()
+        jcenter()
+    }
+
+    group = GROUP
+    version = VERSION_NAME
 }
 
 ext {
@@ -26,40 +26,4 @@ ext {
     minSdkVersion = 14
     targetSdkVersion = 29
     supportLibrariesVersion = '1.0.0'
-}
-
-artifactoryPublish.skip = true
-artifactory {
-    contextUrl = 'https://linkedin.jfrog.io/linkedin'
-    publish {
-        repository {
-            repoKey = 'test-butler'
-            username = System.getenv('ARTIFACTORY_USER') ?: ""
-            password = System.getenv('ARTIFACTORY_KEY') ?: ""
-
-            ivy {
-                ivyLayout = "[organisation]/[module]/[revision]/[module]-[revision].ivy"
-                artifactLayout = "[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"
-                mavenCompatible = true
-            }
-        }
-
-        defaults {
-            publications 'apiLib', 'ivyApiLib',
-                    'lib', 'ivyLib',
-                    'apk', 'ivyApk',
-                    'physicalDeviceApk', 'ivyPhysicalDeviceApk'
-        }
-
-        publishArtifacts = true
-    }
-    clientConfig.setIncludeEnvVars(false)
-}
-
-task distributeBuild(type: DistributeTask) {
-    dependsOn ':artifactoryPublish',
-            'test-butler-api:artifactoryPublish',
-            'test-butler-app:artifactoryPublish',
-            'test-butler-app-physical-devices:artifactoryPublish',
-            'test-butler-library:artifactoryPublish'
 }

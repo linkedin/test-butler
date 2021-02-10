@@ -114,3 +114,19 @@ public void teardown() {
 }
 ```
 NB: See [gotchyas](#any-gotchas-to-look-out-for) above to see why `@BeforeClass` & `@AfterClass` aren't used here.
+
+## Snapshots
+
+You can use snapshot builds to test the latest unreleased changes. A new snapshot is published
+after every merge to the main branch by the [Deploy Snapshot Github Action workflow](.github/workflows/deploy-snapshot.yml).
+
+Just add the Sonatype snapshot repository to your Gradle scripts:
+```gradle
+repositories {
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
+}
+```
+
+You can find the latest snapshot version to use in the [gradle.properties](gradle.properties) file.

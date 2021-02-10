@@ -1,9 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.jfrog.artifactory'
-apply plugin: 'ivy-publish'
-apply plugin: 'maven-publish'
-
-version = VERSION_NAME
+apply from: '../gradle/publishing.gradle'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -29,81 +25,4 @@ android {
         warningsAsErrors true
         disable 'OldTargetApi', 'GradleDependency'
     }
-}
-
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    from android.sourceSets.main.java.srcDirs
-}
-
-task javadoc(type: Javadoc) {
-    source = android.sourceSets.main.java.srcDirs
-    android.libraryVariants.matching { variant -> variant.name == 'debug'}.all { variant ->
-        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-        classpath += variant.getCompileClasspath(null)
-    }
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-publishing {
-    def artifactFile = configurations.default.allArtifacts.files.singleFile
-    def artifactExt = artifactFile.name.tokenize('.').last()
-    publications {
-        ivyApiLib(IvyPublication) {
-          from new org.gradle.api.internal.java.JavaLibrary(new org.gradle.api.internal.artifacts.publish.DefaultPublishArtifact(project.getName(), artifactExt, artifactExt, null, new Date(), artifactFile, assemble), project.configurations.releaseRuntimeClasspath.getAllDependencies())
-          artifact sourcesJar
-          artifact javadocJar
-        }
-
-        apiLib(MavenPublication) {
-          from new org.gradle.api.internal.java.JavaLibrary(new org.gradle.api.internal.artifacts.publish.DefaultPublishArtifact(project.getName(), artifactExt, artifactExt, null, new Date(), artifactFile, assemble), project.configurations.releaseRuntimeClasspath.getAllDependencies())
-
-            artifact sourcesJar
-            artifact javadocJar
-
-            pom.withXml {
-                asNode().children().last() + {
-                    resolveStrategy = Closure.DELEGATE_FIRST
-                    description = 'The Test Butler API for stabilizing Android devices during testing'
-                    url 'https://github.com/linkedin/test-butler'
-                    scm {
-                        url 'https://github.com/linkedin/test-butler'
-                        connection 'scm:git:git://github.com/linkedin/test-butler.git'
-                        developerConnection 'https://github.com/linkedin/test-butler.git'
-                    }
-                    licenses {
-                        license {
-                            name 'The Apache Software License, Version 2.0'
-                            url 'http://www.apache.org/license/LICENSE-2.0.txt'
-                            distribution 'repo'
-                        }
-                    }
-
-                    developers {
-                        developer {
-                            id 'com.linkedin'
-                            name 'LinkedIn Corp'
-                            email ''
-                        }
-                    }
-                }
-            }
-
-            //Useful for inspecting maven artifacts in 'build/repo' after running './gradlew publish'
-            repositories {
-                maven {
-                    url = "$rootProject.buildDir/repo"
-                }
-            }
-        }
-    }
-}
-
-repositories {
-    google()
-    jcenter()
 }
