@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 2.2.1 (2021-02-10)
+
+- Fix signing code to sign the correct publications [#110](https://github.com/linkedin/test-butler/pull/110)
+
 ## Version 2.2.0 (2021-02-10)
 
 - Moved artifact publishing from JCenter to Maven Central [#109](https://github.com/linkedin/test-butler/pull/109)
