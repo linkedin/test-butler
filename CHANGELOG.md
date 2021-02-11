@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 2.2.0 (2021-02-10)
+
+- Moved artifact publishing from JCenter to Maven Central [#109](https://github.com/linkedin/test-butler/pull/109)
+
 ## Version 2.1.1 (2020-11-10)
 
 - Increase timeout for TestButler service binding to avoid timeouts on some API levels [#106](https://github.com/linkedin/test-butler/pull/106)
