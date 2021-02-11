@@ -155,11 +155,10 @@ def addRepositories(publishing) {
 // It can be obtained with gpg --armour --export-secret-keys KEY_ID
 def signingKey = System.getenv("TEST_BUTLER_GPG_PRIVATE_KEY")
 def signingPassword = System.getenv("TEST_BUTLER_GPG_PRIVATE_KEY_PASSWORD")
-if (signingKey != null && signingPassword != null) {
-    signing {
-        useInMemoryPgpKeys(signingKey, signingPassword)
-        sign publishing.publications.maven
+signing {
+    required { signingKey != null && signingPassword != null }
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    publishing.publications.all { publication ->
+        sign publication
     }
-} else {
-    logger.info("Signing disabled - GPG key was not found")
 }
