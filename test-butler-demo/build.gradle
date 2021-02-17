@@ -22,11 +22,6 @@ android {
     }
 }
 
-repositories {
-    google()
-    jcenter()
-}
-
 dependencies {
     androidTestImplementation project(':test-butler-library')
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0')

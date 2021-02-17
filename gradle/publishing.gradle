@@ -1,0 +1,164 @@
+import com.android.build.api.artifact.ArtifactType
+import com.linkedin.gradle.FindApkTask
+
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+// Ideally AGP should provide sources and javadoc integration for their components:
+// https://issuetracker.google.com/issues/145670440
+task sourcesJar(type: Jar) {
+    classifier 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    if (project.plugins.hasPlugin("com.android.application")) {
+        android.applicationVariants.matching { variant -> variant.name == 'debug' }.all { variant ->
+            classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+            classpath += variant.getCompileClasspath(null)
+        }
+    }
+    if (project.plugins.hasPlugin("com.android.library")) {
+        android.libraryVariants.matching { variant -> variant.name == 'debug' }.all { variant ->
+            classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+            classpath += variant.getCompileClasspath(null)
+        }
+    }
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier 'javadoc'
+    from javadoc.destinationDir
+}
+
+// AGP creates the components in afterEvaluate, so we need to use it too
+// https://developer.android.com/studio/build/maven-publish-plugin
+plugins.withId("com.android.library") {
+    afterEvaluate {
+        publishing { publishing ->
+            publications { publicationContainer ->
+                release(MavenPublication) { publication ->
+                    from components.release
+                    addArtifacts(publication)
+                    customizePom(publication)
+                }
+                debug(MavenPublication) { publication ->
+                    from components.debug
+                    addArtifacts(publication)
+                    customizePom(publication)
+                }
+            }
+            addRepositories(publishing)
+        }
+    }
+}
+
+plugins.withId("com.android.application") {
+    android.onVariantProperties { variant ->
+        if (buildType == "release") {
+            project.tasks.register("findApk", FindApkTask.class) {
+                apkFolder.set(artifacts.get(ArtifactType.APK.INSTANCE))
+                builtArtifactsLoader.set(artifacts.getBuiltArtifactsLoader())
+                outputApk.set(project.layout.buildDirectory.file("${project.name}-${variant.buildType}.apk"))
+            }
+        }
+    }
+
+    afterEvaluate {
+        publishing { publishing ->
+            publications { publicationContainer ->
+                release(MavenPublication) { publication ->
+                    // Unfortunately the built-in "components.release_apk" publishes a zip file that
+                    // contains the APK, which can't be consumed by the androidTestUtil configuration
+                    // where Test Butler is typically used. So we need to add the APK separately
+                    // as an explicit artifact. Also unfortunately, there's a lot of hoops to jump
+                    // through to wire up the APK. The custom "findApk" task is wired to the
+                    // release variant's artifact loader, then returns the single APK file as an
+                    // output so it can be wired to the artifact here.
+                    //
+                    // Please Google, help us simplify this!
+                    // https://issuetracker.google.com/issues/179718661
+                    artifact(findApk.getOutputApk())
+
+                    addArtifacts(publication)
+                    customizePom(publication)
+                    pom {
+                        packaging = 'apk'
+                    }
+                }
+            }
+            addRepositories(publishing)
+        }
+    }
+}
+
+def addArtifacts(publication) {
+    publication.artifact(javadocJar) {
+        classifier 'javadoc'
+    }
+    publication.artifact(sourcesJar) {
+        classifier 'sources'
+    }
+}
+
+def customizePom(publication) {
+    publication.pom {
+        name = 'Test Butler'
+        description = 'A companion APK and library for stabilizing Android devices during testing.'
+        url = 'https://github.com/linkedin/test-butler'
+        licenses {
+            license {
+                name = 'The Apache Software License, Version 2.0'
+                url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+            }
+        }
+        developers {
+            developer {
+                id = 'com.linkedin'
+                name = 'LinkedIn Corp'
+            }
+        }
+        scm {
+            connection = 'scm:git:git://github.com/linkedin/test-butler.git'
+            developerConnection = 'scm:git:ssh://github.com:linkedin/test-butler.git'
+            url = 'https://github.com/linkedin/test-butler/tree/master'
+        }
+    }
+}
+
+def addRepositories(publishing) {
+    publishing.repositories {
+        def sonatypeUsername = System.getenv("SONATYPE_USER")
+        def sonatypePassword = System.getenv("SONATYPE_PASSWORD")
+        maven {
+            name = "sonatypeSnapshot"
+            url = "https://oss.sonatype.org/content/repositories/snapshots"
+            credentials {
+                username = sonatypeUsername
+                password = sonatypePassword
+            }
+        }
+        maven {
+            name = "mavenCentral"
+            url = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            credentials {
+                username = sonatypeUsername
+                password = sonatypePassword
+            }
+        }
+    }
+}
+
+// TEST_BUTLER_GPG_PRIVATE_KEY should contain the armoured private key that
+// starts with -----BEGIN PGP PRIVATE KEY BLOCK-----
+// It can be obtained with gpg --armour --export-secret-keys KEY_ID
+def signingKey = System.getenv("TEST_BUTLER_GPG_PRIVATE_KEY")
+def signingPassword = System.getenv("TEST_BUTLER_GPG_PRIVATE_KEY_PASSWORD")
+signing {
+    required { signingKey != null && signingPassword != null }
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    publishing.publications.all { publication ->
+        sign publication
+    }
+}

@@ -1,5 +1,5 @@
 # Test Butler
-[![Build Status](https://travis-ci.org/linkedin/test-butler.svg?branch=master)](https://travis-ci.org/linkedin/test-butler)
+[![Build Status](https://img.shields.io/github/workflow/status/linkedin/test-butler/Merge%20checks)](https://img.shields.io/github/workflow/status/linkedin/test-butler/Merge%20checks)
 [![Maven Central][mavenbadge-svg]][mavencentral]
 
 Reliable Android testing, at your service.
@@ -41,7 +41,7 @@ Test Butler can even use permissions that can't be granted via adb, like the [`S
 
 Only a few:
 
-Test Butler helper app requires an emulator image with stock Android else it won't install, therefore it **will not work with non-stock emulator images such as ones with Google APIs or Google Play!** 
+Test Butler helper app requires an emulator image with stock Android else it won't install, therefore it **will not work with non-stock emulator images such as ones with Google APIs or Google Play!**
 
 Test Butler adds a custom [`IActivityController`](https://github.com/android/platform_frameworks_base/blob/master/core/java/android/app/IActivityController.aidl) to the system to be able to suppress crash & ANR dialogs. This technique is also used internally by the [`Monkey`](https://github.com/android/platform_development/blob/master/cmds/monkey/src/com/android/commands/monkey/Monkey.java#L255) tool. Unfortunately, the implementation of the [`isUserAMonkey()`](https://developer.android.com/reference/android/app/ActivityManager.html#isUserAMonkey()) method takes advantage of the fact that the `Monkey` class is the only thing inside Android that sets an `IActivityController` and [returns true whenever one is set](https://github.com/android/platform_frameworks_base/blob/master/services/core/java/com/android/server/am/ActivityManagerService.java#L10718).
 
@@ -56,21 +56,21 @@ Download the latest .apk and .aar via Maven:
     <dependency>
       <groupId>com.linkedin.testbutler</groupId>
       <artifactId>test-butler-library</artifactId>
-      <version>2.1.0</version>
+      <version>2.2.1</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>com.linkedin.testbutler</groupId>
       <artifactId>test-butler-app</artifactId>
-      <version>2.1.0</version>
+      <version>2.2.1</version>
       <type>pom</type>
     </dependency>
 ```
 
 or Gradle:
 ```
-    androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.1.0'
-    androidTestUtil 'com.linkedin.testbutler:test-butler-app:2.1.0'
+    androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
+    androidTestUtil 'com.linkedin.testbutler:test-butler-app:2.2.1'
 ```
 
 You can also download the apk file manually from [Maven Central][mavencentral] if you prefer.
@@ -114,7 +114,24 @@ public void teardown() {
   TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_HIGH_ACCURACY);
 }
 ```
-NB: See [gotchyas](#any-gotchas-to-look-out-for) above to see why `@BeforeClass` & `@AfterClass` aren't used here. 
+
+NB: See [gotchyas](#any-gotchas-to-look-out-for) above to see why `@BeforeClass` & `@AfterClass` aren't used here.
+
+## Snapshots
+
+You can use snapshot builds to test the latest unreleased changes. A new snapshot is published
+after every merge to the main branch by the [Deploy Snapshot Github Action workflow](.github/workflows/deploy-snapshot.yml).
+
+Just add the Sonatype snapshot repository to your Gradle scripts:
+```gradle
+repositories {
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
+}
+```
+
+You can find the latest snapshot version to use in the [gradle.properties](gradle.properties) file.
 
 [mavenbadge-svg]: https://maven-badges.herokuapp.com/maven-central/com.linkedin.testbutler/test-butler-app/badge.svg
 [mavencentral]: https://search.maven.org/artifact/com.linkedin.testbutler/test-butler-app

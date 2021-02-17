@@ -110,7 +110,7 @@ public class TestButler {
 
         context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
         try {
-            if (!serviceStarted.await(5, TimeUnit.SECONDS)) {
+            if (!serviceStarted.await(15, TimeUnit.SECONDS)) {
                 Log.e(TAG, "Failed to start TestButler; Did you remember to install it before running your tests?\n" +
                         "Running tests without ButlerService, failures or unexpected behavior may occur!!!");
             }
