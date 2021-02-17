@@ -1,5 +1,6 @@
 # Test Butler
 [![Build Status](https://img.shields.io/github/workflow/status/linkedin/test-butler/Merge%20checks)](https://img.shields.io/github/workflow/status/linkedin/test-butler/Merge%20checks)
+[![Maven Central][mavenbadge-svg]][mavencentral]
 
 Reliable Android testing, at your service.
 
@@ -26,7 +27,7 @@ For more background, read the Test Butler announcement [blog post](https://engin
 
 ## How does it work?
 
-Test Butler is a two-part project. It includes an Android library that your test code can depend on, as well as a companion Android app apk that must be installed on your Android emulator before using Test Butler.  You can build the Test Butler APK yourself from source, or download the binary from [Bintray](https://bintray.com/linkedin/maven/test-butler-app/)
+Test Butler is a two-part project. It includes an Android library that your test code can depend on, as well as a companion Android app apk that must be installed on your Android emulator before using Test Butler.  You can build the Test Butler APK yourself from source, or download the binary from [Maven Central][mavencentral]
 
 The Test Butler library is a thin wrapper around an [AIDL interface](https://developer.android.com/guide/components/aidl.html) to give your tests a safe way to talk to the Test Butler app's service running in the background on the emulator.
 
@@ -72,7 +73,7 @@ or Gradle:
     androidTestUtil 'com.linkedin.testbutler:test-butler-app:2.2.1'
 ```
 
-You can also download the apk file manually from [Bintray](https://bintray.com/linkedin/maven/test-butler-app/) if you prefer.
+You can also download the apk file manually from [Maven Central][mavencentral] if you prefer.
 
 ## Getting Started
 
@@ -113,6 +114,7 @@ public void teardown() {
   TestButler.setLocationMode(Settings.Secure.LOCATION_MODE_HIGH_ACCURACY);
 }
 ```
+
 NB: See [gotchyas](#any-gotchas-to-look-out-for) above to see why `@BeforeClass` & `@AfterClass` aren't used here.
 
 ## Snapshots
@@ -130,3 +132,6 @@ repositories {
 ```
 
 You can find the latest snapshot version to use in the [gradle.properties](gradle.properties) file.
+
+[mavenbadge-svg]: https://maven-badges.herokuapp.com/maven-central/com.linkedin.testbutler/test-butler-app/badge.svg
+[mavencentral]: https://search.maven.org/artifact/com.linkedin.testbutler/test-butler-app
