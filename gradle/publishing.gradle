@@ -122,7 +122,7 @@ def customizePom(publication) {
         scm {
             connection = 'scm:git:git://github.com/linkedin/test-butler.git'
             developerConnection = 'scm:git:ssh://github.com:linkedin/test-butler.git'
-            url = 'https://github.com/linkedin/test-butler/tree/master'
+            url = 'https://github.com/linkedin/test-butler/tree/main'
         }
     }
 }
