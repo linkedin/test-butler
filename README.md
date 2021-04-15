@@ -47,8 +47,6 @@ Test Butler adds a custom [`IActivityController`](https://github.com/android/pla
 
 This means that `isUserAMonkey()` **will return true** while Test Butler is running! If your app uses this method to invoke different behavior during actual monkey testing, you may encounter issues while running tests with Test Butler. An easy fix is to create a helper method in your app to call instead of `isUserAMonkey()`, which returns `false` while instrumentation tests are running and calls through to the real `isUserAMonkey()` when the app is not being instrumented.
 
-Also, you can use methods in the `TestButler` class in the `@BeforeClass` & `@AfterClass` of a test class. However, be warned that the test suite *will not* report that the Test Butler app is not installed, instead it will skip the test. This is due to a [bug](https://code.google.com/p/android/issues/detail?id=183352) in Android testing support.
-
 ## Download
 
 Download the latest .apk and .aar via Maven:
