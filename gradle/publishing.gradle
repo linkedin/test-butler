@@ -55,14 +55,16 @@ plugins.withId("com.android.library") {
 }
 
 plugins.withId("com.android.application") {
-    android.onVariantProperties { variant ->
-        if (buildType == "release") {
-            project.tasks.register("findApk", FindApkTask.class) {
-                apkFolder.set(artifacts.get(ArtifactType.APK.INSTANCE))
-                builtArtifactsLoader.set(artifacts.getBuiltArtifactsLoader())
-                outputApk.set(project.layout.buildDirectory.file("${project.name}-${variant.buildType}.apk"))
+    androidComponents {
+        onVariants(selector().all(), { variant ->
+            if (variant.buildType == "release") {
+                project.tasks.register("findApk", FindApkTask.class) {
+                    apkFolder.set(artifacts.get(ArtifactType.APK.INSTANCE))
+                    builtArtifactsLoader.set(artifacts.getBuiltArtifactsLoader())
+                    outputApk.set(project.layout.buildDirectory.file("${project.name}-${variant.buildType}.apk"))
+                }
             }
-        }
+        })
     }
 
     afterEvaluate {
