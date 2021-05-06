@@ -1,9 +1,8 @@
 repositories {
     google()
     mavenCentral()
-    jcenter()
 }
 
 dependencies() {
-    api "com.android.tools.build:gradle:4.1.2"
+    api "com.android.tools.build:gradle:4.2.0"
 }
