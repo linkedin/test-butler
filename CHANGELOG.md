@@ -3,6 +3,9 @@
 ## Version 2.2.1 (2021-02-10)
 
 - Fix signing code to sign the correct publications [#110](https://github.com/linkedin/test-butler/pull/110)
+- Note: Older versions were incorrectly exposing some transitive dependencies such as junit as `api` dependencies.
+  They have now been properly made `implementation` dependencies, so if you were depending on these through test-butler,
+  you will need to add direct dependencies instead.
 
 ## Version 2.2.0 (2021-02-10)
 
