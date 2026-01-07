@@ -1,4 +1,4 @@
-import com.android.build.api.artifact.ArtifactType
+import com.android.build.api.artifact.SingleArtifact
 import com.linkedin.gradle.FindApkTask
 
 apply plugin: 'maven-publish'
@@ -7,7 +7,7 @@ apply plugin: 'signing'
 // Ideally AGP should provide sources and javadoc integration for their components:
 // https://issuetracker.google.com/issues/145670440
 task sourcesJar(type: Jar) {
-    classifier 'sources'
+    archiveClassifier = 'sources'
     from android.sourceSets.main.java.srcDirs
 }
 
@@ -28,7 +28,7 @@ task javadoc(type: Javadoc) {
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier 'javadoc'
+    archiveClassifier = 'javadoc'
     from javadoc.destinationDir
 }
 
@@ -58,8 +58,8 @@ plugins.withId("com.android.application") {
     androidComponents {
         onVariants(selector().withBuildType("release"), { variant ->
             project.tasks.register("findApk", FindApkTask.class) {
-                apkFolder.set(artifacts.get(ArtifactType.APK.INSTANCE))
-                builtArtifactsLoader.set(artifacts.getBuiltArtifactsLoader())
+                apkFolder.set(variant.artifacts.get(SingleArtifact.APK.INSTANCE))
+                builtArtifactsLoader.set(variant.artifacts.getBuiltArtifactsLoader())
                 outputApk.set(project.layout.buildDirectory.file("${project.name}-${variant.buildType}.apk"))
             }
         })

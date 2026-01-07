@@ -215,6 +215,7 @@ public class TestButler {
      * @param country  the country code for the new locale, as expected by {@link Locale#Locale(String, String)}
      * @param context  the "target context"; i.e. Context of the app under test (not the test apk context!)
      */
+    @SuppressLint("AppBundleLocaleChanges")
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public static void setLocale(@NonNull String language, @NonNull String country, @NonNull Context context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {

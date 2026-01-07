@@ -4,5 +4,5 @@ repositories {
 }
 
 dependencies() {
-    api "com.android.tools.build:gradle:4.2.0"
+    api "com.android.tools.build:gradle:7.2.2"
 }
